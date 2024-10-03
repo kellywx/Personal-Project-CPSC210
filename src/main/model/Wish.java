@@ -1,19 +1,17 @@
 package model;
 
-import java.math.BigDecimal;
-
 // Represents a wishlist item with name, brand, price,
 // and whether or not it is fulfilled
 public class Wish {
     private String name;
     private String brand;
-    private BigDecimal price;
+    private int price;
     private Boolean isFulfilled;
 
     // REQUIRES: price > 0
     // EFFECTS: constructs a wishlist item with given name, brand,
     // price, and not fulfilled
-    public Wish(String name, String brand, BigDecimal price) {
+    public Wish(String name, String brand, int price) {
         // stub
     }
 
@@ -31,7 +29,7 @@ public class Wish {
         return brand;
     }
 
-    public BigDecimal getPrice() {
+    public int getPrice() {
         return price;
     }
 
