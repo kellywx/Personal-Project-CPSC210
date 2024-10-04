@@ -24,19 +24,19 @@ public class FriendOperation {
     }
 
     // MODIFIES: this
-    // EFFECTS: deletes friend request by setting status to "DENIED"
-    public void deleteFriendRequest(FriendRequest request) {
+    // EFFECTS: denys friend request by setting status to "DENIED"
+    public void denyFriendRequest(FriendRequest request) {
         // stub
     }
 
     // MODIFIES: this
-    // EFFECTS: returns a list of friend requests with status "PENDING"
+    // EFFECTS: returns a list of user's friend requests with status "PENDING"
     public List<FriendRequest> getPending(User user) {
         // stub
     }
 
     // MODIFIES: this
-    // EFFECTS: returns list of friends
+    // EFFECTS: returns user's list of friends
     public List<User> getFriends(User user) {
         // stub
     }
