@@ -15,13 +15,22 @@ public class FriendList {
     // MODIFIES: this
     // EFFECTS: adds a new friend to friend list
     public void addFriend(String name) {
-        // stub
+        friendList.add(new Friend(name));
     }
 
     // MODIFIES: this
     // EFFECTS: removes a friend from friend list
     public void deleteFriend(String name) {
-        // stub
+        Friend friendToRemove = null;
+        for (Friend friend : friendList) {
+            if (friend.getName().equals(name)){
+                friendToRemove = friend;
+                break;
+            }
+        }
+        if (friendToRemove != null) {
+            friendList.remove(friendToRemove);
+        } 
     }
 
     public List<Friend> getFriendList() {
