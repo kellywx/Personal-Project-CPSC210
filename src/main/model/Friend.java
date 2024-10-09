@@ -11,6 +11,15 @@ public class Friend {
     // EFFECTS: constructs a friend with given name
     //          and empty to-buy list
     public Friend(String name) {
-        
+        this.name = name;
+        toBuyList = new WishList();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public WishList getToBuyList() {
+        return toBuyList;
     }
 }
