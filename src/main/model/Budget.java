@@ -12,12 +12,12 @@ public class Budget {
 
     // MODIFIES: this
     // EFFECTS: adds given amount of money to budget
-    public void addMoney() {
+    public void addMoney(int money) {
     }
 
     // MODIFIES: this
     // EFFECTS: subtracts given amount of money from budget
-    public void spendMoney() {
+    public void spendMoney(int money) {
     }
 
     public int getMoney() {
