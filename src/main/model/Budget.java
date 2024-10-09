@@ -4,10 +4,9 @@ package model;
 public class Budget {
     private int money;
 
-    // REQUIRES: money > 0
-    // EFFECTS: constructs the amount of money user has to spend
-    public Budget(int money) {
-        this.money = money;
+    // EFFECTS: constructs a new budget of zero dollars
+    public Budget() {
+        money = 0;
     }
 
     // MODIFIES: this
