@@ -1,33 +1,39 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
-// Represents a wishlist which contains ArrayList of Wish objects
+// Represents a wishlist containing Wish objects
 public class WishList {
-    private ArrayList<Wish> wishList;
+    private List<Wish> wishList;
 
-    // EFFECTS: constructs a new wishlist
+    // EFFECTS: constructs an empty wishlist
     public WishList() {
         wishList = new ArrayList<>();
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds a new item to wishlist
     public void addWish(String name, String brand, int price) {
         wishList.add(new Wish(name, brand, price));
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes an item from wishlist
     public void deleteWish(String name, String brand) {
-        Iterator<Wish> iterator = wishList.iterator();
-        // Iterate through the wishlist
-        while (iterator.hasNext()) {
-            Wish wish = iterator.next();
-            if (wish.getName().contains(name) && wish.getBrand().contains(brand)) {
-                iterator.remove();
+        Wish wishToRemove = null;
+        for (Wish wish : wishList) {
+            if (wish.getName().equals(name) && wish.getBrand().equals(brand)){
+                wishToRemove = wish;
+                break;
             }
-        };
+        }
+        if (wishToRemove != null) {
+            wishList.remove(wishToRemove);
+        } 
     }
 
-    public ArrayList<Wish> getWishList() {
+    public List<Wish> getWishList() {
         return wishList;
     }
 }

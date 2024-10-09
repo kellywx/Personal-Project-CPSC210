@@ -12,13 +12,16 @@ public class Wish {
     // EFFECTS: constructs a wishlist item with given name, brand,
     // price, and not fulfilled
     public Wish(String name, String brand, int price) {
-        // stub
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        isFulfilled = false;
     }
 
     // MODIFIES: this
     // EFFECTS: marks the wish item as fulfilled
-    public boolean markFulfilled() {
-        return true;
+    public void markFulfilled() {
+        isFulfilled = true;
     }
 
     public String getName() {
