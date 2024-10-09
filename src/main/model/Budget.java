@@ -13,11 +13,13 @@ public class Budget {
     // MODIFIES: this
     // EFFECTS: adds given amount of money to budget
     public void addMoney(int money) {
+        this.money += money;
     }
 
     // MODIFIES: this
     // EFFECTS: subtracts given amount of money from budget
     public void spendMoney(int money) {
+        this.money -= money;
     }
 
     public int getMoney() {
