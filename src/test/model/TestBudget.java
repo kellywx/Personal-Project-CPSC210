@@ -10,22 +10,23 @@ public class TestBudget {
 
     @BeforeEach
     void runBefore() {
-        testBudget = new Budget(100);
+        testBudget = new Budget();
     }
 
     @Test
     void testConstructor() {
-        assertEquals(100, testBudget.getMoney());
+        assertEquals(0, testBudget.getMoney());
     }
 
     @Test
     void testAddMoney() {
         testBudget.addMoney(100);
-        assertEquals(200, testBudget.getMoney());
+        assertEquals(100, testBudget.getMoney());
     }
 
     @Test
     void testSpendMoney() {
+        testBudget.addMoney(100);
         testBudget.spendMoney(30);
         assertEquals(70, testBudget.getMoney());
     }
