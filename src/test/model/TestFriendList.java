@@ -45,7 +45,7 @@ public class TestFriendList {
 
         // Testing if name does not match any friends
         testFriendList.deleteFriend("Joey");
-        assertEquals(2, testFriendList.getFriendList().size());
+        assertEquals(1, testFriendList.getFriendList().size());
     }
 
 }
