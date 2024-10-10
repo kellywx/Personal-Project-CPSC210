@@ -1,11 +1,10 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // Represents a wishlist containing Wish objects
 public class WishList {
-    private List<Wish> wishList;
+    private ArrayList<Wish> wishList;
 
     // EFFECTS: constructs an empty wishlist
     public WishList() {
@@ -33,7 +32,20 @@ public class WishList {
         } 
     }
 
-    public List<Wish> getWishList() {
+    public void fulfillWish(String name, String brand) {
+        Wish wishToFulfill = null;
+        for (Wish wish : wishList) {
+            if (wish.getName().equals(name) && wish.getBrand().equals(brand)){
+                wishToFulfill = wish;
+                break;
+            }
+        }
+        if (wishToFulfill != null) {
+            wishToFulfill.markFulfilled();
+        } 
+    }
+
+    public ArrayList<Wish> getWishList() {
         return wishList;
     }
 }
