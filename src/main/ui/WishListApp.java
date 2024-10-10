@@ -31,7 +31,7 @@ public class WishListApp {
 
         while (keepGoing) {
             displayMenu();
-            command = input.next();
+            command = input.nextLine();
             command = command.toLowerCase();
 
             if (command.equals("4")) {
@@ -95,7 +95,10 @@ public class WishListApp {
     // EFFECTS: lets user view wishlist
     private void viewWishList() {
         System.out.println("Here is your wishlist:");
+        function(wishList);
+    }
 
+    private void function(WishList wishList) {
         boolean keepGoing = true;
         String command = null;
 
@@ -103,32 +106,42 @@ public class WishListApp {
             for (Wish wish : wishList.getWishList()) {
                 System.out.println(wish);
             }
-
-            System.out.println("\ta -> add new item");
-            System.out.println("\td -> delete item");
-            System.out.println("\tc -> check off item");
-            System.out.println("\tb -> back");
-            command = input.next();
+            displayMiniMenu();
+            command = input.nextLine();
             command = command.toLowerCase();
 
             if (command.equals("b")) {
                 keepGoing = false;
             } else {
-                if (command.equals("a")) {
-                    addToWishList();
-                } else if (command.equals("d")) {
-                    deleteFromWishList();
-                } else if (command.equals("c")) {
-                    checkOffWishList();
-                }
+                processNewCommand(wishList, command);
             }
         }
     }
 
-    private void checkOffWishList() {
+    private void displayMiniMenu() {
+        System.out.println("\ta -> add new item");
+        System.out.println("\td -> delete item");
+        System.out.println("\tc -> check off item");
+        System.out.println("\tb -> back");
+    }
+
+    private void processNewCommand(WishList wishList, String command) {
+        if (command.equals("a")) {
+            addToWishList(wishList);
+        } else if (command.equals("d")) {
+            deleteFromWishList(wishList);
+        } else if (command.equals("c")) {
+            checkOffWishList(wishList);
+        } else {
+            System.out.println("Selection not valid...");
+        }
+    }
+
+
+    private void checkOffWishList(WishList wishList) {
         System.out.println("Which item do you want to check off? Enter name:");
         String name = input.nextLine();
-        name = input.nextLine();
+        //name = input.nextLine();
         System.out.println("Enter brand of item");
         String brand = input.nextLine();
         Wish selectedWish = null;
@@ -140,7 +153,6 @@ public class WishListApp {
         }
         if ((budget.getMoney() - selectedWish.getPrice()) < 0) {
             System.out.println("You don't have enough money!");
-            viewWishList();
         } else {
             wishList.fulfillWish(name, brand);
             System.out.println("Successfully checked off.");
@@ -151,11 +163,11 @@ public class WishListApp {
 
     // MODIFIES: this
     // EFFECTS: lets user add wish to wishlist
-    private void addToWishList() {
+    private void addToWishList(WishList wishList) {
         System.out.println("Enter name of item");
         String name = input.nextLine();
 
-        name = input.nextLine();
+        // name = input.nextLine();
 
         System.out.println("Enter brand of item");
         String brand = input.nextLine();
@@ -173,11 +185,11 @@ public class WishListApp {
         System.out.println("You have successfully added a new item!");
     }
 
-    private void deleteFromWishList() {
+    private void deleteFromWishList(WishList wishList) {
         System.out.println("Enter name of item");
         String name = input.nextLine();
 
-        name = input.nextLine();
+        //name = input.nextLine();
 
         System.out.println("Enter brand of item");
         String brand = input.nextLine();
@@ -192,7 +204,7 @@ public class WishListApp {
         System.out.println("\nWould you like to add money?");
         System.out.println("\ty -> yes");
         System.out.println("\tn -> no");
-        String command = input.next();
+        String command = input.nextLine();
         command = command.toLowerCase();
         if (command.equals("y")) {
                 addMoney();
@@ -218,7 +230,7 @@ public class WishListApp {
         System.out.println("\tb -> back");
 
 
-        String command = input.next();
+        String command = input.nextLine();
         command = command.toLowerCase();
         if (command.equals("a")) {
             addNewFriend();
@@ -228,7 +240,7 @@ public class WishListApp {
         } else if (command.equals("s")) {
             System.out.println("Who do you want to shop for today?");
             String name = input.nextLine();
-            name = input.nextLine();
+            //name = input.nextLine();
             Friend selectedFriend = null;
             for (Friend friend : friendList.getFriendList()) {
                 if (friend.getName().equals(name)) {
@@ -241,38 +253,13 @@ public class WishListApp {
 
     }
     public void viewToBuyList(Friend friend) {
-        boolean keepGoing = true;
-        String command = null;
-
-        while (keepGoing) {
-            for (Wish wish : friend.getToBuyList().getWishList()) {
-                System.out.println(wish);
-            }
-            System.out.println("\ta -> add new item");
-            System.out.println("\td -> delete item");
-            System.out.println("\tc -> check off item");
-            System.out.println("\tb -> back");
-            command = input.next();
-            command = command.toLowerCase();
-
-            if (command.equals("b")) {
-                keepGoing = false;
-            } else {
-                if (command.equals("a")) {
-                    addToWishList();
-                } else if (command.equals("d")) {
-                    deleteFromWishList();
-                } else if (command.equals("c")) {
-                    checkOffWishList();
-                }
-            }
-        }
+        function(friend.getToBuyList());
     }
 
     public void addNewFriend() {
         System.out.println("Enter name:");
         String name = input.nextLine();
-        name = input.nextLine();
+        //name = input.nextLine();
         if (name.equals("")== false) {
             friendList.addFriend(name);
         }
