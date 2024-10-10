@@ -39,4 +39,12 @@ public class Wish {
     public boolean isFulfilled() {
         return isFulfilled;
     }
+
+    public String toString() {
+        String status = "No";
+        if (isFulfilled == true) {
+            status = "Yes";
+        }
+        return "Item: " + name + "   Brand: " + brand + "   Price: " + price + "  Fulfilled: " + status;
+    }
 }
