@@ -5,7 +5,7 @@ import java.util.List;
 
 // Represents a list containing Friend objects
 public class FriendList {
-    private List<Friend> friendList;
+    private ArrayList<Friend> friendList;
 
     // EFFECTS: constructs an empty friend list
     public FriendList() {
@@ -33,7 +33,7 @@ public class FriendList {
         } 
     }
 
-    public List<Friend> getFriendList() {
+    public ArrayList<Friend> getFriendList() {
         return friendList;
     }
 

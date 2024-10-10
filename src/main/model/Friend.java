@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 
 // Represents a friend profile
 public class Friend {
@@ -19,5 +20,9 @@ public class Friend {
 
     public WishList getToBuyList() {
         return toBuyList;
+    }
+
+    public String toString() {
+        return "Name: " + name;
     }
 }
