@@ -9,12 +9,14 @@ public class Budget {
         money = 0;
     }
 
+    // REQUIRES: money > 0 
     // MODIFIES: this
     // EFFECTS: adds given amount of money to budget
     public void addMoney(int money) {
         this.money += money;
     }
 
+    // REQUIRES: money > 0
     // MODIFIES: this
     // EFFECTS: subtracts given amount of money from budget
     public void spendMoney(int money) {
