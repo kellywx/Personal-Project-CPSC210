@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-
 // Represents a friend profile
 public class Friend {
     private String name;

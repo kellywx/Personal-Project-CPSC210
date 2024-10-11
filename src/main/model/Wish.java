@@ -45,6 +45,6 @@ public class Wish {
         if (isFulfilled == true) {
             status = "Yes";
         }
-        return "Item: " + name + "   Brand: " + brand + "   Price: " + price + "  Fulfilled: " + status;
+        return "Item: " + name + "   Brand: " + brand + "   Price: $" + price + "   Fulfilled: " + status;
     }
 }
