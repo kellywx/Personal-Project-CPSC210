@@ -20,20 +20,20 @@ public class TestWish {
         assertEquals("Laptop", testWish.getName());
         assertEquals("Apple", testWish.getBrand());
         assertEquals(2500, testWish.getPrice());
-        assertFalse(testWish.isFulfilled());
+        assertFalse(testWish.isChecked());
     }
 
     @Test
-    void testMarkFulfilled() {
-        testWish.markFulfilled();
-        assertTrue(testWish.isFulfilled());
+    void testMarkChecked() {
+        testWish.markChecked();
+        assertTrue(testWish.isChecked());
     }
 
     @Test
     void testToString() {
-        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Fulfilled: No", testWish.toString());
-        testWish.markFulfilled();
-        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Fulfilled: Yes", testWish.toString());
+        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Checked: No", testWish.toString());
+        testWish.markChecked();
+        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Checked: Yes", testWish.toString());
     }
 
 }

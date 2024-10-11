@@ -1,27 +1,26 @@
 package model;
 
-// Represents a wishlist item with name, brand, price,
-// and whether or not it is fulfilled
+// Represents an item with name, brand, price, and whether or not it is checked
 public class Wish {
     private String name;
     private String brand;
     private int price;
-    private Boolean isFulfilled;
+    private Boolean isChecked;
 
     // REQUIRES: price > 0
-    // EFFECTS: constructs a wishlist item with given name, brand,
-    // price, and not fulfilled
+    // EFFECTS: constructs a Wish with given name, brand,
+    // price, and not checked
     public Wish(String name, String brand, int price) {
         this.name = name;
         this.brand = brand;
         this.price = price;
-        isFulfilled = false;
+        isChecked = false;
     }
 
     // MODIFIES: this
-    // EFFECTS: marks the wish item as fulfilled
-    public void markFulfilled() {
-        isFulfilled = true;
+    // EFFECTS: marks Wish as checked
+    public void markChecked() {
+        isChecked = true;
     }
 
     public String getName() {
@@ -36,15 +35,16 @@ public class Wish {
         return price;
     }
 
-    public boolean isFulfilled() {
-        return isFulfilled;
+    public boolean isChecked() {
+        return isChecked;
     }
 
+    // EFFECTS: returns a string representation of Wish
     public String toString() {
         String status = "No";
-        if (isFulfilled == true) {
+        if (isChecked == true) {
             status = "Yes";
         }
-        return "Item: " + name + "   Brand: " + brand + "   Price: $" + price + "   Fulfilled: " + status;
+        return "Item: " + name + "   Brand: " + brand + "   Price: $" + price + "   Checked: " + status;
     }
 }
