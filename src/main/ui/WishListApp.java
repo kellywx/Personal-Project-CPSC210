@@ -99,22 +99,25 @@ public class WishListApp {
         function(wishList);
     }
 
-    private void function(WishList wishList) {
+    private void function(WishList list) {
         boolean keepGoing = true;
         String command = null;
 
         while (keepGoing) {
-            for (Wish wish : wishList.getWishList()) {
+            for (Wish wish : list.getWishList()) {
                 System.out.println(wish);
             }
             displayMiniMenu();
             command = input.nextLine();
             command = command.toLowerCase();
 
-            if (command.equals("b") && wishList.equals(wishList)) {
+            if (command.equals("b") && list.equals(wishList)) {
+                keepGoing = false;
+            } else if (command.equals("b")) {
+                viewFriends();
                 keepGoing = false;
             } else {
-                processNewCommand(wishList, command);
+                processNewCommand(list, command);
             }
         }
     }
@@ -256,26 +259,40 @@ public class WishListApp {
 
     private void viewBudget() {
         System.out.println("Here is your current budget: $" + budget.getMoney());
-        System.out.println("\nWould you like to add money?");
-        System.out.println("\ty -> yes");
-        System.out.println("\tn -> no");
-        String command = input.nextLine();
-        command = command.toLowerCase();
-        if (command.equals("y")) {
+        boolean keepGoing = true;
+        while (keepGoing) {
+            System.out.println("\nWould you like to add money?");
+            System.out.println("\ty -> yes");
+            System.out.println("\tn -> no");
+            String command = input.nextLine();
+            command = command.toLowerCase();
+            if (command.equals("y")) {
                 addMoney();
+            } else {
+                keepGoing = false;
+            }
         }
     }
 
     private void addMoney() {
         System.out.println("How much money would you like to add?");
         String number = input.nextLine();
-        while (number.isEmpty()) {
+        while (number.isEmpty() || isInteger(number) == false) {
             System.out.println("Try again");
             number = input.nextLine();
         }
         int money = Integer.parseInt(number);
         budget.addMoney(money);
         System.out.println("Successful. Here is your new budget: $" + budget.getMoney());
+        }
+
+    public boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private void viewFriends() {
@@ -338,8 +355,5 @@ public class WishListApp {
         }
     }
 }
-
-// QUESTION 1: I have to add name = input.nextLine() after each one
-// QUESTION 2: how can I reuse my addToWishList(), deleteFromWishList() etc. code?
 
 
