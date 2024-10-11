@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // Represents a list containing Friend objects
 public class FriendList {
@@ -23,14 +22,14 @@ public class FriendList {
     public void deleteFriend(String name) {
         Friend friendToRemove = null;
         for (Friend friend : friendList) {
-            if (friend.getName().equals(name)){
+            if (friend.getName().equals(name)) {
                 friendToRemove = friend;
                 break;
             }
         }
         if (friendToRemove != null) {
             friendList.remove(friendToRemove);
-        } 
+        }
     }
 
     public ArrayList<Friend> getFriendList() {
