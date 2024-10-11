@@ -212,6 +212,10 @@ public class WishListApp {
         System.out.println("Enter price of item");
         String number = input.nextLine();
         emptyInput(number);
+        while (isInteger(number) == false) {
+            System.out.println("Not valid. Try again");
+            number = input.nextLine();
+        }
         int price = Integer.parseInt(number);
         if (price < 0) {
             System.out.println("Price cannot be negative... Try again.");
@@ -333,6 +337,7 @@ public class WishListApp {
         }
         if (selectedFriend == null) {
             System.out.println("Friend not found.");
+            viewFriends();
         } else {
             viewToBuyList(selectedFriend);
         }
