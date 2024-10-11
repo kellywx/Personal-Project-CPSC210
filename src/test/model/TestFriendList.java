@@ -22,7 +22,7 @@ public class TestFriendList {
 
     @Test
     void testAddFriend() {
-        testFriendList.addFriend("Amy");
+        testFriendList.addFriend("Monica");
         testFriendList.addFriend("Rachel");
         
         // Testing if friend list has 2 friends, not empty
@@ -30,12 +30,12 @@ public class TestFriendList {
         assertEquals(2, testFriendList.getFriendList().size());
 
         // Testing if the first friend has been added correctly
-        assertEquals("Amy", testFriendList.getFriendList().get(0).getName());
+        assertEquals("Monica", testFriendList.getFriendList().get(0).getName());
     }
 
     @Test
     void testDeleteFriend() {
-        testFriendList.addFriend("Amy");
+        testFriendList.addFriend("Monica");
         testFriendList.addFriend("Rachel");
         testFriendList.deleteFriend("Rachel");
 
@@ -43,7 +43,7 @@ public class TestFriendList {
         testFriendList.deleteFriend("Rachel");
         assertEquals(1, testFriendList.getFriendList().size());
 
-        // Testing if name does not match any friends
+        // Testing if name does not match any friends in friend list
         testFriendList.deleteFriend("Joey");
         assertEquals(1, testFriendList.getFriendList().size());
     }

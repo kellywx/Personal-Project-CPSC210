@@ -11,17 +11,17 @@ public class TestFriend {
 
     @BeforeEach
     void runBefore() {
-        testFriend = new Friend("Amy");
+        testFriend = new Friend("Ross");
     }
 
     @Test
     void testConstructor() {
-        assertEquals("Amy", testFriend.getName());
+        assertEquals("Ross", testFriend.getName());
         assertTrue(testFriend.getToBuyList().getWishList().isEmpty());
     }
 
     @Test
     void testToString() {
-        assertEquals("Name: Amy", testFriend.toString());
+        assertEquals("Name: Ross", testFriend.toString());
     }
 }
