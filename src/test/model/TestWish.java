@@ -29,4 +29,11 @@ public class TestWish {
         assertTrue(testWish.isFulfilled());
     }
 
+    @Test
+    void testToString() {
+        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Fulfilled: No", testWish.toString());
+        testWish.markFulfilled();
+        assertEquals("Item: Laptop   Brand: Apple   Price: $2500   Fulfilled: Yes", testWish.toString());
+    }
+
 }

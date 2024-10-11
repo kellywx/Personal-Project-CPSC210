@@ -19,4 +19,9 @@ public class TestFriend {
         assertEquals("Amy", testFriend.getName());
         assertTrue(testFriend.getToBuyList().getWishList().isEmpty());
     }
+
+    @Test
+    void testToString() {
+        assertEquals("Name: Amy", testFriend.toString());
+    }
 }

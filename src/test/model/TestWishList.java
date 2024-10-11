@@ -56,4 +56,16 @@ public class TestWishList {
         assertEquals(1, testWishList.getWishList().size());
     }
 
+    @Test
+    void testFulfillWish() {
+        testWishList.addWish("T-shirt", "Lululemon", 20);
+        testWishList.addWish("Lipstick", "Rare", 30);
+        testWishList.fulfillWish("T-shirt", "Nike");
+        assertFalse(testWishList.getWishList().get(0).isFulfilled());
+        testWishList.fulfillWish("Lipstick", "Lululemon");
+        assertFalse(testWishList.getWishList().get(1).isFulfilled());
+        testWishList.fulfillWish("Lipstick", "Rare");
+        assertTrue(testWishList.getWishList().get(1).isFulfilled());
+    }
+
 }
