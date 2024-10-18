@@ -1,0 +1,15 @@
+{
+    "wishes": [
+        {
+            "name": "Shoes",
+            "brand": "Nike",
+            "price": 80
+        },
+        {
+            "name": "Laptop",
+            "brand": "Apple",
+            "price": 2500
+        }
+    ],
+    "name": "My Wishlist"
+}
