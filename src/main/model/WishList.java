@@ -5,10 +5,12 @@ import java.util.ArrayList;
 // Represents a wishlist containing Wish objects
 public class WishList {
     private ArrayList<Wish> wishList;
+    private String name;
 
     // EFFECTS: constructs an empty wishlist
-    public WishList() {
+    public WishList(String name) {
         wishList = new ArrayList<>();
+        this.name = name;
     }
 
     // MODIFIES: this
@@ -49,5 +51,9 @@ public class WishList {
 
     public ArrayList<Wish> getWishList() {
         return wishList;
+    }
+
+    public String getName() {
+        return name;
     }
 }

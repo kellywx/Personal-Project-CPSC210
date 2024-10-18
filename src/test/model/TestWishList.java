@@ -12,7 +12,7 @@ public class TestWishList {
 
     @BeforeEach
     void runBefore() {
-        testWishList = new WishList();
+        testWishList = new WishList("Kelly");
     }
 
     @Test

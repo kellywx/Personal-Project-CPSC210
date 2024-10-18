@@ -60,7 +60,7 @@ public class WishListApp {
     // MODIFIES: this
     // EFFECTS: initializes wishlist, friend list, friends, and wallet
     private void init() {
-        wishList = new WishList();
+        wishList = new WishList("Kelly");
         wishList.addWish("Shoes", "Nike", 100);
         wishList.addWish("Makeup", "Sephora", 50);
         wishList.addWish("Shirt", "Lululemon", 30);
