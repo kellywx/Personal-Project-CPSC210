@@ -11,3 +11,5 @@ My project will be a **shopping wishlist application** in which users can create
 - As a user, I want to be able to create to-buy lists for my friends and family
 - As a user, I want to be able to enter the amount of money I have to spend
 - As a user, I want to be able to keep track of how much money I have left after buying certain items
+- As a user, when I select the quit option from the application menu, I want to be reminded to save my wishlists and to-buy lists to file
+- As a user, when I start the application, I want to be given the option to load my wishlists and to-buy lists from file
