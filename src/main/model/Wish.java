@@ -1,7 +1,11 @@
 package model;
 
+import org.json.JSONObject;
+
+import persistence.Writable;
+
 // Represents an item with name, brand, price, and whether or not it is checked
-public class Wish {
+public class Wish implements Writable{
     private String name;
     private String brand;
     private int price;
@@ -46,5 +50,14 @@ public class Wish {
             status = "Yes";
         }
         return "Item: " + name + "   Brand: " + brand + "   Price: $" + price + "   Checked: " + status;
+    }
+
+     @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("brand", brand);
+        json.put("price", price);
+        return json;
     }
 }

@@ -2,8 +2,13 @@ package model;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import persistence.Writable;
+
 // Represents a wishlist containing Wish objects
-public class WishList {
+public class WishList implements Writable{
     private ArrayList<Wish> wishList;
     private String name;
 
@@ -55,5 +60,24 @@ public class WishList {
 
     public String getName() {
         return name;
+    }
+
+     @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("wishList", wishesToJson());
+        return json;
+    }
+
+    // EFFECTS: returns wishes in this wishlist as a JSON array
+    private JSONArray wishesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Wish wish : wishList) {
+            jsonArray.put(wish.toJson());
+        }
+
+        return jsonArray;
     }
 }
