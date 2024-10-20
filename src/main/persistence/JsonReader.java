@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import org.json.*;
 
-import model.Wish;
 import model.WishList;
 
 // Represents a reader that reads wishlist from JSON data stored in file
@@ -23,28 +22,46 @@ public class JsonReader {
     // EFFECTS: reads wishlist from file and returns it;
     // throws IOException if an error occurs reading data from file
     public WishList read() throws IOException {
-        return new WishList("Stub");
+        String jsonData = readFile(source);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        return parseWishList(jsonObject);
     }
 
     // EFFECTS: reads source file as string and returns it
     private String readFile(String source) throws IOException {
-        return "";
+        StringBuilder contentBuilder = new StringBuilder();
+
+        try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
+            stream.forEach(s -> contentBuilder.append(s));
+        }
+
+        return contentBuilder.toString();
     }
 
     // EFFECTS: parses wishlist from JSON object and returns it
     private WishList parseWishList(JSONObject jsonObject) {
-        return new WishList("Stub");
+        String name = jsonObject.getString("name");
+        WishList wishList = new WishList(name);
+        addWishes(wishList, jsonObject);
+        return wishList;
     }
 
     // MODIFIES: WishList
-    // EFFECTS: parses wishes from JSON object and adds them to wishlist
+    // EFFECTS: parses wishList from JSON object and adds them to wishlist
     private void addWishes(WishList wishList, JSONObject jsonObject) {
-        // stub
+        JSONArray jsonArray = jsonObject.getJSONArray("wishList");
+        for (Object json : jsonArray) {
+            JSONObject nextWish = (JSONObject) json;
+            addWish(wishList, nextWish);
+        }
     }
 
     // MODIFIES: WishList
-    // EFFECTS: parses wishes from JSON object and adds it to wishlist
+    // EFFECTS: parses wishList from JSON object and adds it to wishlist
     private void addWish(WishList wishList, JSONObject jsonObject) {
-        // stub
+        String name = jsonObject.getString("name");
+        String brand = jsonObject.getString("brand");
+        int price = jsonObject.getInt("price");
+        wishList.addWish(name, brand, price);
     }
 }
