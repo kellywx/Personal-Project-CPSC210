@@ -1,15 +1,12 @@
 {
-    "wishList": [
-        {
+    "wishList": [],
+    "wallet": 0,
+    "friendList": [{
+        "to-buy List": [{
             "price": 100,
             "name": "Shoes",
             "brand": "Nike"
-        },
-        {
-            "price": 2500,
-            "name": "Laptop",
-            "brand": "Apple"
-        }
-    ],
-    "name": "Kelly's Wishlist"
+        }],
+        "name": "JOey"
+    }]
 }

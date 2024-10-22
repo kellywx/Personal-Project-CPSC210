@@ -1,7 +1,11 @@
 package model;
 
+import org.json.JSONObject;
+
+import persistence.Writable;
+
 // Represents user's wallet with amount of money
-public class Wallet {
+public class Wallet implements Writable {
     private int money;
 
     // EFFECTS: constructs a new wallet with $0
@@ -25,6 +29,13 @@ public class Wallet {
 
     public int getMoney() {
         return money;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("wallet", money);
+        return json;
     }
 
 }

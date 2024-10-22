@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.json.*;
 
+import model.FriendList;
+import model.Wallet;
 import model.WishList;
 
 // Represents a reader that reads wishlist from JSON data stored in file
@@ -21,10 +23,26 @@ public class JsonReader {
 
     // EFFECTS: reads wishlist from file and returns it;
     // throws IOException if an error occurs reading data from file
-    public WishList read() throws IOException {
+    public WishList readWishList() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
         return parseWishList(jsonObject);
+    }
+
+    // EFFECTS: reads friendlist from file and returns it;
+    // throws IOException if an error occurs reading data from file
+    public FriendList readFriendList() throws IOException {
+        String jsonData = readFile(source);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        return parseFriendList(jsonObject);
+    }
+
+    // EFFECTS: reads wallet from file and returns it;
+    // throws IOException if an error occurs reading data from file
+    public Wallet readWallet() throws IOException {
+        String jsonData = readFile(source);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        return parseWallet(jsonObject);
     }
 
     // EFFECTS: reads source file as string and returns it
@@ -40,10 +58,24 @@ public class JsonReader {
 
     // EFFECTS: parses wishlist from JSON object and returns it
     private WishList parseWishList(JSONObject jsonObject) {
-        String name = jsonObject.getString("name");
-        WishList wishList = new WishList(name);
+        WishList wishList = new WishList();
         addWishes(wishList, jsonObject);
         return wishList;
+    }
+
+     // EFFECTS: parses wishlist from JSON object and returns it
+     private FriendList parseFriendList(JSONObject jsonObject) {
+        FriendList friendList = new FriendList();
+        addFriends(friendList, jsonObject);
+        return friendList;
+    }
+
+
+    // EFFECTS: parses wallet from JSON object and returns it
+    private Wallet parseWallet(JSONObject jsonObject) {
+        Wallet wallet = new Wallet();
+        addMoney(wallet, jsonObject);
+        return wallet;
     }
 
     // MODIFIES: WishList
@@ -63,5 +95,30 @@ public class JsonReader {
         String brand = jsonObject.getString("brand");
         int price = jsonObject.getInt("price");
         wishList.addWish(name, brand, price);
+    }
+
+    // MODIFIES: FriendList
+    // EFFECTS: parses friendList from JSON object and adds them to friendlist
+    private void addFriends(FriendList friendList, JSONObject jsonObject) {
+        JSONArray jsonArray = jsonObject.getJSONArray("friendList");
+        for (Object json : jsonArray) {
+            JSONObject nextFriend = (JSONObject) json;
+            addFriend(friendList, nextFriend);
+        }
+    }
+
+    // MODIFIES: FriendList
+    // EFFECTS: parses friendList from JSON object and adds it to friendlist
+    private void addFriend(FriendList friendList, JSONObject jsonObject) {
+        String name = jsonObject.getString("name");
+        friendList.addFriend(name);
+    }
+
+
+    // MODIFIES: Wallet
+    // EFFECTS: parses friendList from JSON object and adds it to friendlist
+    private void addMoney(Wallet wallet, JSONObject jsonObject) {
+        int money = jsonObject.getInt("money");
+        wallet.addMoney(money);
     }
 }

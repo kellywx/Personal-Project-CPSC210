@@ -30,7 +30,7 @@ class JsonWriterTest extends JsonTest {
             WishList wishList = new WishList("My Wishlist");
             JsonWriter writer = new JsonWriter("./data/testWriterEmptyWishList.json");
             writer.open();
-            writer.write(wishList);
+            writer.writeWishList(wishList);
             writer.close();
 
             JsonReader reader = new JsonReader("./data/testWriterEmptyWishList.json");
@@ -50,7 +50,7 @@ class JsonWriterTest extends JsonTest {
             wishList.addWish("Laptop", "Apple", 2500);
             JsonWriter writer = new JsonWriter("./data/testWriterGeneralWishList.json");
             writer.open();
-            writer.write(wishList);
+            writer.writeWishList(wishList);
             writer.close();
 
             JsonReader reader = new JsonReader("./data/testWriterGeneralWishList.json");

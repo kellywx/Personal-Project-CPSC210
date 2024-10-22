@@ -1,9 +1,12 @@
 package persistence;
 import org.json.JSONObject;
 
+import model.FriendList;
+import model.Wallet;
 import model.WishList;
 
 import java.io.*;
+import java.util.List;
 
 // Represents a writer that writes JSON representation of wishlist to file
 public class JsonWriter {
@@ -25,9 +28,21 @@ public class JsonWriter {
 
     // MODIFIES: this
     // EFFECTS: writes JSON representation of wishlist to file
-    public void write(WishList wishList) {
-        JSONObject json = wishList.toJson();
-        saveToFile(json.toString(TAB));
+    public void writeWishList(WishList wishList, Wallet wallet, FriendList friendList) {
+
+        JSONObject combinedJson = new JSONObject();
+
+        mergeJson(combinedJson, wishList.toJson());
+        mergeJson(combinedJson, friendList.toJson());
+        mergeJson(combinedJson, wallet.toJson());
+    
+        saveToFile(combinedJson.toString(TAB));
+    }
+
+    private void mergeJson(JSONObject target, JSONObject source) {
+        for (String key : source.keySet()) {
+            target.put(key, source.get(key));
+        }
     }
 
     // MODIFIES: this

@@ -2,8 +2,13 @@ package model;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import persistence.Writable;
+
 // Represents a list containing Friend objects
-public class FriendList {
+public class FriendList implements Writable{
     private ArrayList<Friend> friendList;
 
     // EFFECTS: constructs an empty friend list
@@ -34,6 +39,24 @@ public class FriendList {
 
     public ArrayList<Friend> getFriendList() {
         return friendList;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("friendList", friendsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns wishes in this wishlist as a JSON array
+    private JSONArray friendsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Friend friend : friendList) {
+            jsonArray.put(friend.toJson());
+        }
+
+        return jsonArray;
     }
 
 }

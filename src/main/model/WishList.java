@@ -10,12 +10,10 @@ import persistence.Writable;
 // Represents a wishlist containing Wish objects
 public class WishList implements Writable{
     private ArrayList<Wish> wishList;
-    private String name;
 
     // EFFECTS: constructs an empty wishlist
-    public WishList(String name) {
+    public WishList() {
         wishList = new ArrayList<>();
-        this.name = name;
     }
 
     // MODIFIES: this
@@ -58,20 +56,15 @@ public class WishList implements Writable{
         return wishList;
     }
 
-    public String getName() {
-        return name;
-    }
-
      @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("name", name);
         json.put("wishList", wishesToJson());
         return json;
     }
 
     // EFFECTS: returns wishes in this wishlist as a JSON array
-    private JSONArray wishesToJson() {
+    public JSONArray wishesToJson() {
         JSONArray jsonArray = new JSONArray();
 
         for (Wish wish : wishList) {
