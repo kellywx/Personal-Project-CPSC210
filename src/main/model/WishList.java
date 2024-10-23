@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 // Represents a wishlist containing Wish objects
-public class WishList implements Writable{
+public class WishList implements Writable {
     private ArrayList<Wish> wishList;
 
     // EFFECTS: constructs an empty wishlist
@@ -56,19 +56,18 @@ public class WishList implements Writable{
         Wish selectedWish = null;
         for (Wish wish : getWishList()) {
             if (wish.getName().equals(name) && wish.getBrand().equals(brand)) {
-                    selectedWish = wish;
-                    break;
+                selectedWish = wish;
+                break;
             }
         }
         return selectedWish;
     }
 
-
     public ArrayList<Wish> getWishList() {
         return wishList;
     }
 
-     @Override
+    @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("wishList", wishesToJson());

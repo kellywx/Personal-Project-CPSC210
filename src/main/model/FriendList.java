@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 // Represents a list containing Friend objects
-public class FriendList implements Writable{
+public class FriendList implements Writable {
     private ArrayList<Friend> friendList;
 
     // EFFECTS: constructs an empty friend list

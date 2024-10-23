@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 // Represents a friend profile
-public class Friend implements Writable{
+public class Friend implements Writable {
     private String name;
     private WishList toBuyList;
 

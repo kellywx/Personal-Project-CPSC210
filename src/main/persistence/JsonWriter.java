@@ -1,4 +1,5 @@
 package persistence;
+
 import org.json.JSONObject;
 
 import model.FriendList;
@@ -6,9 +7,11 @@ import model.Wallet;
 import model.WishList;
 
 import java.io.*;
-import java.util.List;
 
-// Represents a writer that writes JSON representation of wishlist to file
+// Referenced from the JsonSerialization Demo
+// https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+
+// Represents a writer that writes JSON representation of wishlist, friend list, and wallet to file
 public class JsonWriter {
     private static final int TAB = 4;
     private PrintWriter writer;
@@ -20,14 +23,16 @@ public class JsonWriter {
     }
 
     // MODIFIES: this
-    // EFFECTS: opens writer; throws FileNotFoundException if destination file cannot
+    // EFFECTS: opens writer; throws FileNotFoundException if destination file
+    // cannot
     // be opened for writing
     public void open() throws FileNotFoundException {
         writer = new PrintWriter(new File(destination));
     }
 
     // MODIFIES: this
-    // EFFECTS: writes JSON representation of wishlist to file
+    // EFFECTS: writes JSON representation of wishlist, friend list, and wallet to
+    // file
     public void write(WishList wishList, Wallet wallet, FriendList friendList) {
 
         JSONObject combinedJson = new JSONObject();
@@ -35,7 +40,7 @@ public class JsonWriter {
         mergeJson(combinedJson, wishList.toJson());
         mergeJson(combinedJson, friendList.toJson());
         mergeJson(combinedJson, wallet.toJson());
-    
+
         saveToFile(combinedJson.toString(TAB));
     }
 
@@ -57,4 +62,3 @@ public class JsonWriter {
         writer.print(json);
     }
 }
-

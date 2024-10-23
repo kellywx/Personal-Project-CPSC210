@@ -14,7 +14,10 @@ import model.Wallet;
 import model.Wish;
 import model.WishList;
 
-// Represents a reader that reads wishlist from JSON data stored in file
+// Referenced from the JsonSerialization Demo
+// https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+
+// Represents a reader that reads wishlist, friend list, and wallet from JSON data stored in file
 public class JsonReader {
     private String source;
 
@@ -31,7 +34,7 @@ public class JsonReader {
         return parseWishList(jsonObject);
     }
 
-    // EFFECTS: reads friendlist from file and returns it;
+    // EFFECTS: reads friend list from file and returns it;
     // throws IOException if an error occurs reading data from file
     public FriendList readFriendList() throws IOException {
         String jsonData = readFile(source);
@@ -65,13 +68,12 @@ public class JsonReader {
         return wishList;
     }
 
-     // EFFECTS: parses wishlist from JSON object and returns it
-     private FriendList parseFriendList(JSONObject jsonObject) {
+    // EFFECTS: parses friend list from JSON object and returns it
+    private FriendList parseFriendList(JSONObject jsonObject) {
         FriendList friendList = new FriendList();
         addFriends(friendList, jsonObject);
         return friendList;
     }
-
 
     // EFFECTS: parses wallet from JSON object and returns it
     private Wallet parseWallet(JSONObject jsonObject) {
@@ -81,7 +83,7 @@ public class JsonReader {
     }
 
     // MODIFIES: WishList
-    // EFFECTS: parses wishList from JSON object and adds them to wishlist
+    // EFFECTS: parses wishes from JSON object and adds them to wishlist
     private void addWishes(WishList wishList, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("wishList");
         for (Object json : jsonArray) {
@@ -91,13 +93,12 @@ public class JsonReader {
     }
 
     // MODIFIES: WishList
-    // EFFECTS: parses wishList from JSON object and adds it to wishlist
+    // EFFECTS: parses wishes from JSON object and adds it to wishlist
     private void addWish(WishList wishList, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         String brand = jsonObject.getString("brand");
         int price = jsonObject.getInt("price");
         String checkedOff = jsonObject.getString("checked off?");
-        // PROBLEM!!!
         wishList.addWish(name, brand, price);
         Wish selectedWish = wishList.findWish(name, brand);
         if (checkedOff.equals("Yes")) {
@@ -106,7 +107,7 @@ public class JsonReader {
     }
 
     // MODIFIES: FriendList
-    // EFFECTS: parses friendList from JSON object and adds them to friendlist
+    // EFFECTS: parses friends from JSON object and adds them to friendlist
     private void addFriends(FriendList friendList, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("friendList");
         for (Object json : jsonArray) {
@@ -116,7 +117,7 @@ public class JsonReader {
     }
 
     // MODIFIES: FriendList
-    // EFFECTS: parses friendList from JSON object and adds it to friendlist
+    // EFFECTS: parses friends from JSON object and adds it to friendlist
     private void addFriend(FriendList friendList, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         friendList.addFriend(name);
@@ -125,19 +126,26 @@ public class JsonReader {
         addToBuyList(jsonObject, wishList);
     }
 
+    // MODIFIES: FriendList
+    // EFFECTS: parses to-buy list from JSON object and adds it to friendlist
     private void addToBuyList(JSONObject jsonObject, WishList wishList) {
         JSONArray jsonArray = jsonObject.getJSONArray("to-buy List");
         for (Object json : jsonArray) {
-            JSONObject dummy = (JSONObject) json;
-            String name = dummy.getString("name");
-            int price = dummy.getInt("price");
-            String brand = dummy.getString("brand");
-            wishList.addWish(name, brand, price);       }
+            JSONObject object = (JSONObject) json;
+            String name = object.getString("name");
+            int price = object.getInt("price");
+            String brand = object.getString("brand");
+            String checkedOff = object.getString("checked off?");
+            wishList.addWish(name, brand, price);
+            Wish selectedWish = wishList.findWish(name, brand);
+            if (checkedOff.equals("Yes")) {
+                selectedWish.markChecked();
+            }
+        }
     }
 
-
     // MODIFIES: Wallet
-    // EFFECTS: parses friendList from JSON object and adds it to friendlist
+    // EFFECTS: parses money amount from JSON object and adds it to wallet
     private void addMoney(Wallet wallet, JSONObject jsonObject) {
         int money = jsonObject.getInt("wallet");
         wallet.addMoney(money);
