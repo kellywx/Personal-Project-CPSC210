@@ -8,8 +8,10 @@ import java.util.stream.Stream;
 
 import org.json.*;
 
+import model.Friend;
 import model.FriendList;
 import model.Wallet;
+import model.Wish;
 import model.WishList;
 
 // Represents a reader that reads wishlist from JSON data stored in file
@@ -94,7 +96,13 @@ public class JsonReader {
         String name = jsonObject.getString("name");
         String brand = jsonObject.getString("brand");
         int price = jsonObject.getInt("price");
+        String checkedOff = jsonObject.getString("checked off?");
+        // PROBLEM!!!
         wishList.addWish(name, brand, price);
+        Wish selectedWish = wishList.findWish(name, brand);
+        if (checkedOff.equals("Yes")) {
+            selectedWish.markChecked();
+        }
     }
 
     // MODIFIES: FriendList
@@ -112,13 +120,26 @@ public class JsonReader {
     private void addFriend(FriendList friendList, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         friendList.addFriend(name);
+        Friend friend = friendList.getFriend(name);
+        WishList wishList = friend.getToBuyList();
+        addToBuyList(jsonObject, wishList);
+    }
+
+    private void addToBuyList(JSONObject jsonObject, WishList wishList) {
+        JSONArray jsonArray = jsonObject.getJSONArray("to-buy List");
+        for (Object json : jsonArray) {
+            JSONObject dummy = (JSONObject) json;
+            String name = dummy.getString("name");
+            int price = dummy.getInt("price");
+            String brand = dummy.getString("brand");
+            wishList.addWish(name, brand, price);       }
     }
 
 
     // MODIFIES: Wallet
     // EFFECTS: parses friendList from JSON object and adds it to friendlist
     private void addMoney(Wallet wallet, JSONObject jsonObject) {
-        int money = jsonObject.getInt("money");
+        int money = jsonObject.getInt("wallet");
         wallet.addMoney(money);
     }
 }
