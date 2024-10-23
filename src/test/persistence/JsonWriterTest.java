@@ -85,7 +85,8 @@ class JsonWriterTest extends JsonTest {
             checkWish("Makeup", "Sephora", 50, "No",rachelWishes.get(0));
             ArrayList<Wish> monicaWishes = friends.get(1).getToBuyList().getWishList();
             assertEquals(1, monicaWishes.size());
-            checkWish("Shirt", "Ralph Lauren", 30, "No",monicaWishes.get(0));
+            monicaWishes.get(0).markChecked();
+            checkWish("Shirt", "Ralph Lauren", 30, "Yes",monicaWishes.get(0));
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
