@@ -3,6 +3,7 @@ package model;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class TestWishList {
 
     @BeforeEach
     void runBefore() {
-        testWishList = new WishList("Kelly");
+        testWishList = new WishList();
     }
 
     @Test
@@ -66,6 +67,20 @@ public class TestWishList {
         assertFalse(testWishList.getWishList().get(1).isChecked());
         testWishList.checkWish("Lipstick", "Sephora");
         assertTrue(testWishList.getWishList().get(1).isChecked());
+    }
+
+    @Test
+    void testFindWish() {
+        testWishList.addWish("Shirt", "Lululemon", 20);
+        testWishList.addWish("Lipstick", "Sephora", 30);
+        Wish selectedWish = testWishList.findWish("Lipstick", "Sephora");
+        assertEquals("Lipstick", selectedWish.getName());
+        assertEquals("Sephora", selectedWish.getBrand());
+        assertEquals(30, selectedWish.getPrice());
+
+        assertNull(testWishList.findWish("Lipstick", "FakeSephora"));
+        assertNull(testWishList.findWish("FakeLipstick", "Sephora"));
+        assertNull(testWishList.findWish("FakeLipstick", "FakeSephora"));
     }
 
 }

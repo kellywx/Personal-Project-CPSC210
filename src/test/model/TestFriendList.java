@@ -3,6 +3,7 @@ package model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,17 @@ public class TestFriendList {
         // Testing if name does not match any friends in friend list
         testFriendList.deleteFriend("Joey");
         assertEquals(1, testFriendList.getFriendList().size());
+    }
+
+    @Test
+    void testGetFriend() {
+        testFriendList.addFriend("Monica");
+        testFriendList.addFriend("Rachel");
+
+        assertEquals("Rachel",testFriendList.getFriend("Rachel").getName());
+        assertEquals(0,testFriendList.getFriend("Rachel").getToBuyList().getWishList().size());
+
+        assertNull(testFriendList.getFriend("Joey"));
     }
 
 }
