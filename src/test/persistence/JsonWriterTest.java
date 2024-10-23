@@ -2,6 +2,9 @@ package persistence;
 
 import org.junit.jupiter.api.Test;
 
+import model.Friend;
+import model.FriendList;
+import model.Wallet;
 import model.Wish;
 import model.WishList;
 
@@ -15,7 +18,6 @@ class JsonWriterTest extends JsonTest {
     @Test
     void testWriterInvalidFile() {
         try {
-            WishList wishList = new WishList("My Wishlist");
             JsonWriter writer = new JsonWriter("./data/my\0illegal:fileName.json");
             writer.open();
             fail("IOException was expected");
@@ -25,18 +27,23 @@ class JsonWriterTest extends JsonTest {
     }
 
     @Test
-    void testWriterEmptyWishList() {
+    void testWriterEmptyEverything() {
         try {
-            WishList wishList = new WishList("My Wishlist");
+            WishList wishList = new WishList();
+            FriendList friendList = new FriendList();
+            Wallet wallet = new Wallet();
             JsonWriter writer = new JsonWriter("./data/testWriterEmptyWishList.json");
             writer.open();
-            writer.writeWishList(wishList);
+            writer.write(wishList,wallet,friendList);
             writer.close();
 
             JsonReader reader = new JsonReader("./data/testWriterEmptyWishList.json");
-            wishList = reader.read();
-            assertEquals("My Wishlist", wishList.getName());
+            wishList = reader.readWishList();
+            friendList = reader.readFriendList();
+            wallet = reader.readWallet();
             assertEquals(0, wishList.getWishList().size());
+            assertEquals(0, friendList.getFriendList().size());
+            assertEquals(0, wallet.getMoney());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }
@@ -45,22 +52,40 @@ class JsonWriterTest extends JsonTest {
     @Test
     void testWriterGeneralWishList() {
         try {
-            WishList wishList = new WishList("My Wishlist");
+            WishList wishList = new WishList();
             wishList.addWish("Shoes", "Nike", 90);
             wishList.addWish("Laptop", "Apple", 2500);
+            wishList.checkWish("Shoes", "Nike");
+            Wallet wallet = new Wallet();
+            wallet.addMoney(100);
+            FriendList friendList = new FriendList();
+            friendList.addFriend("Rachel");
+            friendList.addFriend("Monica");
+            Friend rachel = friendList.getFriend("Rachel");
+            rachel.getToBuyList().addWish("Makeup", "Sephora", 50);
+            Friend monica = friendList.getFriend("Monica");
+            monica.getToBuyList().addWish("Shirt", "Ralph Lauren", 30);
             JsonWriter writer = new JsonWriter("./data/testWriterGeneralWishList.json");
             writer.open();
-            writer.writeWishList(wishList);
+            writer.write(wishList, wallet, friendList);
             writer.close();
 
             JsonReader reader = new JsonReader("./data/testWriterGeneralWishList.json");
-            wishList = reader.read();
-            assertEquals("My Wishlist", wishList.getName());
+            wishList = reader.readWishList();
+            friendList = reader.readFriendList();
+            wallet = reader.readWallet();
             ArrayList<Wish> wishes = wishList.getWishList();
             assertEquals(2, wishes.size());
-            assertEquals("Shoes", wishes.get(0).getName());
-            assertEquals("Apple", wishes.get(1).getBrand());
-            assertEquals(2500, wishes.get(1).getPrice());
+            checkWish("Shoes", "Nike", 90, "Yes",wishes.get(0));
+            checkWish("Laptop", "Apple", 2500, "No",wishes.get(1));
+            ArrayList<Friend> friends = friendList.getFriendList();
+            assertEquals(2, friends.size());
+            ArrayList<Wish> rachelWishes = friends.get(0).getToBuyList().getWishList();
+            assertEquals(1, rachelWishes.size());
+            checkWish("Makeup", "Sephora", 50, "No",rachelWishes.get(0));
+            ArrayList<Wish> monicaWishes = friends.get(1).getToBuyList().getWishList();
+            assertEquals(1, monicaWishes.size());
+            checkWish("Shirt", "Ralph Lauren", 30, "No",monicaWishes.get(0));
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
