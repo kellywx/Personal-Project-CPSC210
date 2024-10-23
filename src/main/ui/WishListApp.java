@@ -3,7 +3,6 @@ package ui;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import model.Wallet;
@@ -24,8 +23,8 @@ public class WishListApp {
     private JsonReader jsonReader;
     private static final String JSON_STORE = "./data/wishlist.json";
 
-
-    // EFFECTS: constructs wishlist and runs the wishlist application
+    // EFFECTS: constructs wishlist, friend list, and wallet, and runs the wishlist
+    // application
     public WishListApp() throws FileNotFoundException {
         input = new Scanner(System.in);
         input.useDelimiter("\r?\n|\r");
@@ -71,7 +70,7 @@ public class WishListApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: processes user command from main menu
+    // EFFECTS: processes user input from main menu
     private void processCommand(String command) {
         if (command.equals("1")) {
             viewWishList();
@@ -85,7 +84,7 @@ public class WishListApp {
             load();
         } else if (command.equals("6")) {
             print();
-        }else {
+        } else {
             System.out.println("Selection not valid... Try again");
         }
     }
@@ -151,7 +150,7 @@ public class WishListApp {
         }
     }
 
-     // MODIFIES: this
+    // MODIFIES: this
     // EFFECTS: checks off selected Wish item
     private void checkOffWishList(WishList wishList) {
         System.out.println("Which item do you want to check off? Enter name:");
@@ -173,7 +172,7 @@ public class WishListApp {
         } else if (selectedWish.isChecked() == true) {
             System.out.println("Item is already checked.");
         } else if (selectedWish != null) {
-            processSelectedWish(wishList,selectedWish, name, brand);
+            processSelectedWish(wishList, selectedWish, name, brand);
         }
     }
 
@@ -189,7 +188,6 @@ public class WishListApp {
             System.out.println("Here is your updated wallet: $" + wallet.getMoney());
         }
     }
-
 
     // MODIFIES: this
     // EFFECTS: add new Wish to wishlist
@@ -315,7 +313,6 @@ public class WishListApp {
         displayList(friend.getToBuyList());
     }
 
-
     // MODIFIES: this
     // EFFECTS: adds new friend to friend list
     public void addNewFriend() {
@@ -326,8 +323,7 @@ public class WishListApp {
         }
     }
 
-
-    // EFFECTS: prints all wishes in wishlist to the console
+    // EFFECTS: prints wishlist, friend list, and wallet to the console
     private void print() {
         ArrayList<Wish> wishes = wishList.getWishList();
         ArrayList<Friend> friends = friendList.getFriendList();
@@ -338,7 +334,7 @@ public class WishListApp {
         }
 
         System.out.println("My Friends:");
-        for (Friend friend: friends) {
+        for (Friend friend : friends) {
             System.out.println(friend.getName());
             WishList items = friend.getToBuyList();
             for (Wish wish : items.getWishList()) {
@@ -349,7 +345,7 @@ public class WishListApp {
 
     }
 
-    // EFFECTS: saves the wishlist to file
+    // EFFECTS: saves wishlist, friend list, and wallet to file
     private void save() {
         try {
             jsonWriter.open();
@@ -362,7 +358,7 @@ public class WishListApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: loads workroom from file
+    // EFFECTS: loads wishlist, friend list, and wallet from file
     private void load() {
         try {
             wishList = jsonReader.readWishList();
