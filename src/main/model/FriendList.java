@@ -37,6 +37,21 @@ public class FriendList implements Writable{
         }
     }
 
+    public Friend getFriend(String name) {
+        Friend selectedFriend = null;
+        for (Friend friend : getFriendList()) {
+            if (friend.getName().equals(name)) {
+                selectedFriend = friend;
+                break;
+            }
+        }
+        if (selectedFriend != null) {
+            return selectedFriend;
+        } else {
+            return null;
+        }
+    }
+
     public ArrayList<Friend> getFriendList() {
         return friendList;
     }

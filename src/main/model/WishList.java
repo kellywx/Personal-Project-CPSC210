@@ -52,6 +52,18 @@ public class WishList implements Writable{
         }
     }
 
+    public Wish findWish(String name, String brand) {
+        Wish selectedWish = null;
+        for (Wish wish : getWishList()) {
+            if (wish.getName().equals(name) && wish.getBrand().equals(brand)) {
+                    selectedWish = wish;
+                    break;
+            }
+        }
+        return selectedWish;
+    }
+
+
     public ArrayList<Wish> getWishList() {
         return wishList;
     }
