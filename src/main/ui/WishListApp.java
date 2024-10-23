@@ -301,18 +301,11 @@ public class WishListApp {
     public void shopForFriend() {
         System.out.println("Who do you want to shop for today?");
         String name = input.nextLine();
-        Friend selectedFriend = null;
-        for (Friend friend : friendList.getFriendList()) {
-            if (friend.getName().equals(name)) {
-                selectedFriend = friend;
-                break;
-            }
-        }
-        if (selectedFriend == null) {
+        if (friendList.getFriend(name) == null) {
             System.out.println("Friend not found.");
             viewFriends();
         } else {
-            viewToBuyList(selectedFriend);
+            viewToBuyList(friendList.getFriend(name));
         }
     }
 
@@ -360,7 +353,7 @@ public class WishListApp {
     private void save() {
         try {
             jsonWriter.open();
-            jsonWriter.writeWishList(wishList, wallet, friendList);
+            jsonWriter.write(wishList, wallet, friendList);
             jsonWriter.close();
             System.out.println("Saved to" + JSON_STORE);
         } catch (FileNotFoundException e) {
