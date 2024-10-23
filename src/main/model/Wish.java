@@ -43,6 +43,14 @@ public class Wish implements Writable{
         return isChecked;
     }
 
+    public String isCheckedOff() {
+        if (isChecked) {
+            return "Yes";
+        } else {
+            return "No";
+        }
+    }
+
     // EFFECTS: returns a string representation of Wish
     public String toString() {
         String status = "No";
@@ -58,6 +66,7 @@ public class Wish implements Writable{
         json.put("name", name);
         json.put("brand", brand);
         json.put("price", price);
+        json.put("checked off?", isCheckedOff());
         return json;
     }
 }
