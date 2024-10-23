@@ -3,13 +3,26 @@
         {
             "name": "Shoes",
             "brand": "Nike",
-            "price": 90
+            "price": 90,
+            "checked off?": "No"
         },
         {
             "name": "Laptop",
             "brand": "Apple",
-            "price": 2500
+            "price": 2500,
+            "checked off?": "Yes"
         }
     ],
-    "name": "My Wishlist"
+    "wallet": 100,
+    "friendList": [
+        {
+            "to-buy List": [{
+                "checked off?": "No",
+                "price": 30,
+                "name": "Shirt",
+                "brand": "Ralph Lauren"
+            }],
+            "name": "Monica"
+        }
+    ]
 }

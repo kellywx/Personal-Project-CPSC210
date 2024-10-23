@@ -1,15 +1,37 @@
 {
     "wishList": [
         {
+            "checked off?": "Yes",
             "price": 90,
             "name": "Shoes",
             "brand": "Nike"
         },
         {
+            "checked off?": "No",
             "price": 2500,
             "name": "Laptop",
             "brand": "Apple"
         }
     ],
-    "name": "My Wishlist"
+    "wallet": 100,
+    "friendList": [
+        {
+            "to-buy List": [{
+                "checked off?": "No",
+                "price": 50,
+                "name": "Makeup",
+                "brand": "Sephora"
+            }],
+            "name": "Rachel"
+        },
+        {
+            "to-buy List": [{
+                "checked off?": "No",
+                "price": 30,
+                "name": "Shirt",
+                "brand": "Ralph Lauren"
+            }],
+            "name": "Monica"
+        }
+    ]
 }
