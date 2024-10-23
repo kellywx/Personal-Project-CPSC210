@@ -55,10 +55,12 @@ class JsonReaderTest extends JsonTest {
             checkWish("Laptop", "Apple", 2500, "Yes", wishes.get(1));
             FriendList friendList = reader.readFriendList();
             ArrayList<Friend> friends = friendList.getFriendList();
-            assertEquals(1, friends.size());
+            assertEquals(2, friends.size());
             ArrayList<Wish> monicaWishes = friends.get(0).getToBuyList().getWishList();
+            ArrayList<Wish> rachelWishes = friends.get(1).getToBuyList().getWishList();
             assertEquals(1, monicaWishes.size());
-            checkWish("Shirt", "Ralph Lauren", 30, "No",monicaWishes.get(0));
+            checkWish("Shirt", "Ralph Lauren", 30, "Yes",monicaWishes.get(0));
+            checkWish("Earings", "Aldo", 50, "No",rachelWishes.get(0));
 
         } catch (IOException e) {
             fail("Couldn't read from file");

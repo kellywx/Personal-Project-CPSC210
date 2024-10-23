@@ -17,12 +17,21 @@
     "friendList": [
         {
             "to-buy List": [{
-                "checked off?": "No",
+                "checked off?": "Yes",
                 "price": 30,
                 "name": "Shirt",
                 "brand": "Ralph Lauren"
             }],
             "name": "Monica"
+        },
+        {
+            "to-buy List": [{
+                "checked off?": "No",
+                "price": 50,
+                "name": "Earings",
+                "brand": "Aldo"
+            }],
+            "name": "Rachel"
         }
     ]
 }
