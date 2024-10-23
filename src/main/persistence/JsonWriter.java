@@ -28,7 +28,7 @@ public class JsonWriter {
 
     // MODIFIES: this
     // EFFECTS: writes JSON representation of wishlist to file
-    public void writeWishList(WishList wishList, Wallet wallet, FriendList friendList) {
+    public void write(WishList wishList, Wallet wallet, FriendList friendList) {
 
         JSONObject combinedJson = new JSONObject();
 
