@@ -1,382 +1,221 @@
 package ui;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import model.Wallet;
-import model.Friend;
-import model.FriendList;
-import model.Wish;
-import model.WishList;
-import persistence.JsonReader;
-import persistence.JsonWriter;
+public class WishListApp extends JFrame {
+    private JTextField nameField;
+    private JTextField brandField;
+    private JTextField priceField;
+    private DefaultTableModel tableModel;
+    private double walletBalance = 0.0; 
+    private JLabel walletLabel;
 
-// Wishlist application
-public class WishListApp {
-    private WishList wishList;
-    private FriendList friendList;
-    private Wallet wallet;
-    private Scanner input;
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
-    private static final String JSON_STORE = "./data/wishlist.json";
+    public WishListApp() {
+        setTitle("Wishlist Application");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-    // EFFECTS: constructs wishlist, friend list, and wallet, and runs the wishlist
-    // application
-    public WishListApp() throws FileNotFoundException {
-        input = new Scanner(System.in);
-        input.useDelimiter("\r?\n|\r");
-        wishList = new WishList();
-        friendList = new FriendList();
-        jsonWriter = new JsonWriter(JSON_STORE);
-        jsonReader = new JsonReader(JSON_STORE);
-        wallet = new Wallet();
-        runWishList();
+        // Input panel
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        inputPanel.add(new JLabel("Item Name:"));
+        nameField = new JTextField();
+        inputPanel.add(nameField);
+
+        inputPanel.add(new JLabel("Brand:"));
+        brandField = new JTextField();
+        inputPanel.add(brandField);
+
+        inputPanel.add(new JLabel("Price:"));
+        priceField = new JTextField();
+        ((PlainDocument) priceField.getDocument()).setDocumentFilter(new NumericFilter()); 
+        // Filters priceField to only allow numbers
+                                                                                        
+        inputPanel.add(priceField);
+
+        add(inputPanel, BorderLayout.NORTH);
+
+        // Wishlist table setup
+        String[] columnNames = { "Item Name", "Brand", "Price", "Checked Off" };
+        tableModel = new DefaultTableModel(columnNames, 0);
+        JTable wishlistTable = new JTable(tableModel) {
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return column == 3 ? Boolean.class : String.class;
+            }
+        };
+        add(new JScrollPane(wishlistTable), BorderLayout.CENTER);
+        setupTableListener(wishlistTable);
+
+        // Button panel for add, delete, wallet buttons
+        JPanel buttonPanel = new JPanel();
+        JButton addButton = new JButton("Add Item");
+        JButton deleteButton = new JButton("Delete");
+        JButton walletButton = new JButton("Set Wallet Balance");
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(walletButton);
+        String sep = System.getProperty("file.separator");
+        ImageIcon originalCoinImage = new ImageIcon(System.getProperty("user.dir") + sep
+                + "images" + sep + "dollar.png"); 
+
+        Image scaledImage = originalCoinImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        ImageIcon scaledCoinImage = new ImageIcon(scaledImage);
+        walletLabel = new JLabel("$0.00", scaledCoinImage, JLabel.LEADING);
+        buttonPanel.add(walletLabel);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Action listeners
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addItem();
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteSelectedItem(wishlistTable);
+            }
+        });
+
+        walletButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openWalletDialog(); // Open the wallet balance dialog
+            }
+        });
     }
 
-    // MODIFIES: this
-    // EFFECTS: processes user input
-    private void runWishList() {
-        boolean keepGoing = true;
-        String command = null;
+    private void addItem() {
+        String name = nameField.getText();
+        String brand = brandField.getText();
+        String price = priceField.getText();
 
-        while (keepGoing) {
-            displayMainMenu();
-            command = input.nextLine().toLowerCase();
-            if (command.isEmpty() == false) {
-                if (command.equals("7")) {
-                    keepGoing = false;
-                } else {
-                    processCommand(command);
+        if (!name.isEmpty() && !brand.isEmpty() && !price.isEmpty()) {
+            String formattedPrice = "$" + price;
+            tableModel.addRow(new Object[] { name, brand, formattedPrice, false });
+            nameField.setText("");
+            brandField.setText("");
+            priceField.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteSelectedItem(JTable table) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow >= 0) {
+            tableModel.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an item to delete", "Selection Error",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    // Open the wallet balance dialog
+    private void openWalletDialog() {
+        // Create a new dialog
+        JDialog walletDialog = new JDialog(this, "Add Money to Wallet", true);
+        walletDialog.setSize(300, 150);
+        walletDialog.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Enter amount to add ($): ");
+        JTextField walletInputField = new JTextField(15);
+        JButton submitButton = new JButton("Add Money");
+
+        panel.add(label);
+        panel.add(walletInputField);
+        panel.add(submitButton);
+        walletDialog.add(panel, BorderLayout.CENTER);
+
+        // Action listener for submit button
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    double amountToAdd = Double.parseDouble(walletInputField.getText());
+
+                    if (amountToAdd < 0) {
+                        JOptionPane.showMessageDialog(walletDialog, "Amount must be positive.", "Input Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        walletBalance += amountToAdd; // Adds the amount to the current balance
+                        updateWalletLabel(); // Update the wallet balance label
+                        JOptionPane.showMessageDialog(walletDialog,
+                                "Successfully added $" + amountToAdd + " to your wallet.");
+                        walletDialog.dispose();
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(walletDialog, "Please enter a valid number.", "Input Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
+        });
 
-        System.out.println("\nGoodbye!");
+        walletDialog.setVisible(true); // Show the wallet dialog
     }
 
-    // EFFECTS: displays main menu of options to user
-    private void displayMainMenu() {
-        System.out.println("\nSelect from:");
-        System.out.println("\t1 -> view wishlist");
-        System.out.println("\t2 -> view wallet");
-        System.out.println("\t3 -> view friends");
-        System.out.println("\t4 -> save to file");
-        System.out.println("\t5 -> load from file");
-        System.out.println("\t6 -> print");
-        System.out.println("\t7 -> quit");
-    }
+    private void setupTableListener(JTable table) {
+        table.getModel().addTableModelListener(e -> {
+            if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+                int row = e.getFirstRow(); // Get the row that was updated
+                int column = e.getColumn(); // Get the column that was updated
 
-    // MODIFIES: this
-    // EFFECTS: processes user input from main menu
-    private void processCommand(String command) {
-        if (command.equals("1")) {
-            viewWishList();
-        } else if (command.equals("2")) {
-            viewWallet();
-        } else if (command.equals("3")) {
-            viewFriends();
-        } else if (command.equals("4")) {
-            save();
-        } else if (command.equals("5")) {
-            load();
-        } else if (command.equals("6")) {
-            print();
-        } else {
-            System.out.println("Selection not valid... Try again");
-        }
-    }
+                // Check if the "Checked Off" column was updated
+                if (column == 3) {
+                    Boolean checkedOff = (Boolean) table.getValueAt(row, column);
+                    String priceString = (String) table.getValueAt(row, 2); // Get the price of the item
+                    double itemPrice = Double.parseDouble(priceString.replace("$", "")); // Parse price
 
-    // MODIFIES: this
-    // EFFECTS: displays user's wishlist
-    private void viewWishList() {
-        System.out.println("Here is your wishlist:");
-        displayList(wishList);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: displays items in given list and the mini menu
-    private void displayList(WishList list) {
-        boolean keepGoing = true;
-        String command = null;
-
-        while (keepGoing) {
-            for (Wish wish : list.getWishList()) {
-                System.out.println(wish);
-            }
-            displayMiniMenu();
-            command = input.nextLine().toLowerCase();
-
-            if (command.equals("b") && list.equals(wishList)) {
-                keepGoing = false;
-            } else if (command.equals("b")) {
-                viewFriends();
-                keepGoing = false;
-            } else {
-                processNewCommand(list, command);
-            }
-        }
-    }
-
-    // EFFECTS: displays another menu of options to user
-    private void displayMiniMenu() {
-        System.out.println("\ta -> add new item");
-        System.out.println("\td -> delete item");
-        System.out.println("\tc -> check off item");
-        System.out.println("\tb -> back");
-    }
-
-    // MODIFIES: this
-    // EFFECTS: processes user input from mini menu
-    private void processNewCommand(WishList wishList, String command) {
-        if (command.equals("a")) {
-            addToWishList(wishList);
-        } else if (command.equals("d")) {
-            if (wishList.getWishList().isEmpty() == false) {
-                deleteFromWishList(wishList);
-            } else {
-                System.out.println("There are no items in this wishlist.");
-            }
-        } else if (command.equals("c")) {
-            if (wishList.getWishList().isEmpty() == false) {
-                checkOffWishList(wishList);
-            } else {
-                System.out.println("There are no items in this wishlist.");
-            }
-        } else {
-            System.out.println("Selection not valid... Try again");
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: checks off selected Wish item
-    private void checkOffWishList(WishList wishList) {
-        System.out.println("Which item do you want to check off? Enter name:");
-        String name = input.nextLine();
-        String brand = "";
-        Wish selectedWish = null;
-        for (Wish wish : wishList.getWishList()) {
-            if (wish.getName().equals(name)) {
-                System.out.println("Enter brand of item");
-                brand = input.nextLine();
-                if (wish.getBrand().equals(brand)) {
-                    selectedWish = wish;
-                    break;
+                    if (checkedOff != null && checkedOff) {
+                        // If item was checked
+                        if (walletBalance >= itemPrice) {
+                            walletBalance -= itemPrice; // Deduct the price from wallet
+                            updateWalletLabel(); // Update the wallet balance label
+                        } else {
+                            // Insufficient funds, uncheck the item
+                            JOptionPane.showMessageDialog(this, "Insufficient funds to check off this item!",
+                                    "Insufficient Balance", JOptionPane.ERROR_MESSAGE);
+                            table.setValueAt(false, row, column); // Uncheck the item
+                        }
+                    }
                 }
             }
-        }
-        if (selectedWish == null) {
-            System.out.println("Item not found.");
-        } else if (selectedWish.isChecked() == true) {
-            System.out.println("Item is already checked.");
-        } else if (selectedWish != null) {
-            processSelectedWish(wishList, selectedWish, name, brand);
-        }
+        });
     }
 
-    // MODIFIES: this
-    // EFFECTS: checks selected Wish if user has enough money in wallet
-    private void processSelectedWish(WishList wishList, Wish selectedWish, String name, String brand) {
-        if (wallet.getMoney() - selectedWish.getPrice() < 0) {
-            System.out.println("You don't have enough money!");
-        } else {
-            wishList.checkWish(name, brand);
-            System.out.println("Successfully checked off!");
-            wallet.spendMoney(selectedWish.getPrice());
-            System.out.println("Here is your updated wallet: $" + wallet.getMoney());
-        }
+    // Updates the wallet label
+    private void updateWalletLabel() {
+        walletLabel.setText("Wallet: $" + String.format("%.2f", walletBalance));
     }
 
-    // MODIFIES: this
-    // EFFECTS: add new Wish to wishlist
-    private void addToWishList(WishList wishList) {
-        System.out.println("Enter name of item");
-        String name = input.nextLine();
-        System.out.println("Enter brand of item");
-        String brand = input.nextLine();
-        System.out.println("Enter price of item");
-        String number = input.nextLine();
-        while (isInteger(number) == false) {
-            System.out.println("Not valid. Try again");
-            number = input.nextLine();
-        }
-        int price = Integer.parseInt(number);
-        if (price < 0) {
-            System.out.println("Price cannot be negative... Try again.");
-        } else {
-            wishList.addWish(name, brand, price);
-            System.out.println("You have successfully added a new item!");
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: deletes Wish from wishlist
-    private void deleteFromWishList(WishList wishList) {
-        System.out.println("Enter name of item");
-        String name = input.nextLine();
-
-        Wish selectedWish = null;
-        String brand = "";
-        for (Wish wish : wishList.getWishList()) {
-            if (wish.getName().equals(name)) {
-                System.out.println("Enter brand of item");
-                brand = input.nextLine();
-                if (wish.getBrand().equals(brand)) {
-                    selectedWish = wish;
-                    break;
-                }
+    // DocumentFilter to allow only numeric input in priceField
+    private static class NumericFilter extends DocumentFilter {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                throws BadLocationException {
+            if (string != null && string.matches("\\d*\\.?\\d*")) { // Allow digits and one decimal point
+                super.insertString(fb, offset, string, attr);
             }
         }
-        if (selectedWish == null) {
-            System.out.println("Item not found.");
-        } else {
-            wishList.deleteWish(name, brand);
-            System.out.println("Item has been successfully deleted!");
-        }
-    }
 
-    // MODIFIES: this
-    // EFFECTS: displays user's wallet and option to add money
-    private void viewWallet() {
-        System.out.println("Here is your current wallet: $" + wallet.getMoney());
-        boolean keepGoing = true;
-        while (keepGoing) {
-            System.out.println("\nWould you like to add money?");
-            System.out.println("\ty -> yes");
-            System.out.println("\tn -> no");
-            String command = input.nextLine();
-            command = command.toLowerCase();
-            if (command.equals("y")) {
-                addMoney();
-            } else {
-                keepGoing = false;
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                throws BadLocationException {
+            if (text != null && text.matches("\\d*\\.?\\d*")) { // Allow digits and one decimal point
+                super.replace(fb, offset, length, text, attrs);
             }
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: adds money to user's wallet
-    private void addMoney() {
-        System.out.println("How much money would you like to add?");
-        String number = input.nextLine();
-        while (isInteger(number) == false) {
-            System.out.println("Not valid. Try again");
-            number = input.nextLine();
-        }
-        int money = Integer.parseInt(number);
-        wallet.addMoney(money);
-        System.out.println("Successful! Here is your updated wallet: $" + wallet.getMoney());
-
-    }
-
-    // MODIFIES: this
-    // EFFECTS: displays friend list and options for friend
-    private void viewFriends() {
-        System.out.println("Here is your friend list:");
-
-        for (Friend friend : friendList.getFriendList()) {
-            System.out.println(friend);
-        }
-
-        System.out.println("\ta -> add new friend");
-        System.out.println("\ts -> shop for a friend");
-        System.out.println("\tb -> back");
-
-        String command = input.nextLine().toLowerCase();
-        if (command.equals("a")) {
-            addNewFriend();
-            System.out.println("You have successfully added a new friend!");
-            viewFriends();
-        } else if (command.equals("s")) {
-            shopForFriend();
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: find friend from the given input to view to-buy list
-    public void shopForFriend() {
-        System.out.println("Who do you want to shop for today?");
-        String name = input.nextLine();
-        if (friendList.getFriend(name) == null) {
-            System.out.println("Friend not found.");
-            viewFriends();
-        } else {
-            viewToBuyList(friendList.getFriend(name));
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: displays selected friend's to-buy list
-    public void viewToBuyList(Friend friend) {
-        displayList(friend.getToBuyList());
-    }
-
-    // MODIFIES: this
-    // EFFECTS: adds new friend to friend list
-    public void addNewFriend() {
-        System.out.println("Enter name:");
-        String name = input.nextLine();
-        if (name.equals("") == false) {
-            friendList.addFriend(name);
-        }
-    }
-
-    // EFFECTS: prints wishlist, friend list, and wallet to the console
-    private void print() {
-        ArrayList<Wish> wishes = wishList.getWishList();
-        ArrayList<Friend> friends = friendList.getFriendList();
-
-        System.out.println("My WishList:");
-        for (Wish wish : wishes) {
-            System.out.println(wish);
-        }
-
-        System.out.println("My Friends:");
-        for (Friend friend : friends) {
-            System.out.println(friend.getName());
-            WishList items = friend.getToBuyList();
-            for (Wish wish : items.getWishList()) {
-                System.out.println(wish);
-            }
-        }
-        System.out.println("My Wallet: $" + wallet.getMoney());
-
-    }
-
-    // EFFECTS: saves wishlist, friend list, and wallet to file
-    private void save() {
-        try {
-            jsonWriter.open();
-            jsonWriter.write(wishList, wallet, friendList);
-            jsonWriter.close();
-            System.out.println("Saved to" + JSON_STORE);
-        } catch (FileNotFoundException e) {
-            System.out.println("Unable to write to file: " + JSON_STORE);
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: loads wishlist, friend list, and wallet from file
-    private void load() {
-        try {
-            wishList = jsonReader.readWishList();
-            friendList = jsonReader.readFriendList();
-            wallet = jsonReader.readWallet();
-            System.out.println("Loaded from" + JSON_STORE);
-        } catch (IOException e) {
-            System.out.println("Unable to read from file: " + JSON_STORE);
-        }
-    }
-
-    // EFFECTS: returns true if string input is able to convert into int
-    public boolean isInteger(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 

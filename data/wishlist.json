@@ -1,10 +1,18 @@
 {
     "wishList": [{
-        "checked off?": "No",
-        "price": 200,
+        "checked off?": "Yes",
+        "price": 100,
         "name": "Shoes",
         "brand": "Nike"
     }],
-    "wallet": 50,
-    "friendList": []
+    "wallet": 20,
+    "friendList": [{
+        "to-buy List": [{
+            "checked off?": "Yes",
+            "price": 40,
+            "name": "Makeup",
+            "brand": "Sephora"
+        }],
+        "name": "Rachel"
+    }]
 }
