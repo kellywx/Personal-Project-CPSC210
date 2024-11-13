@@ -8,13 +8,13 @@ import persistence.Writable;
 public class Wish implements Writable {
     private String name;
     private String brand;
-    private int price;
+    private double price;
     private Boolean isChecked;
 
     // REQUIRES: price > 0
     // EFFECTS: constructs a Wish with given name, brand,
     // price, and not checked
-    public Wish(String name, String brand, int price) {
+    public Wish(String name, String brand, double price) {
         this.name = name;
         this.brand = brand;
         this.price = price;
@@ -35,7 +35,7 @@ public class Wish implements Writable {
         return brand;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

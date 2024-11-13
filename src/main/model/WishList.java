@@ -18,7 +18,7 @@ public class WishList implements Writable {
 
     // MODIFIES: this
     // EFFECTS: adds a new Wish item to wishlist
-    public void addWish(String name, String brand, int price) {
+    public void addWish(String name, String brand, double price) {
         wishList.add(new Wish(name, brand, price));
     }
 

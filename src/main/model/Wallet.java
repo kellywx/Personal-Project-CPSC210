@@ -6,28 +6,28 @@ import persistence.Writable;
 
 // Represents user's wallet with amount of money
 public class Wallet implements Writable {
-    private int money;
+    private double money;
 
-    // EFFECTS: constructs a new wallet with $0
+    // EFFECTS: constructs a new wallet with $0.00
     public Wallet() {
-        money = 0;
+        money = 0.00;
     }
 
     // REQUIRES: money > 0
     // MODIFIES: this
     // EFFECTS: adds given amount of money to wallet
-    public void addMoney(int money) {
+    public void addMoney(double money) {
         this.money += money;
     }
 
     // REQUIRES: money > 0
     // MODIFIES: this
     // EFFECTS: subtracts given amount of money from wallet
-    public void spendMoney(int money) {
+    public void spendMoney(double money) {
         this.money -= money;
     }
 
-    public int getMoney() {
+    public double getMoney() {
         return money;
     }
 
