@@ -11,7 +11,12 @@
             "name": "Monica"
         },
         {
-            "to-buy List": [],
+            "to-buy List": [{
+                "checked off?": "No",
+                "price": 100,
+                "name": "test",
+                "brand": "test"
+            }],
             "name": "Phoebe"
         }
     ]
