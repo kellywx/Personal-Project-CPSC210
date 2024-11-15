@@ -1,9 +1,19 @@
 {
-    "wishList": [],
+    "wishList": [{
+        "checked off?": "Yes",
+        "price": 100,
+        "name": "test",
+        "brand": "test"
+    }],
     "wallet": 0,
     "friendList": [
         {
-            "to-buy List": [],
+            "to-buy List": [{
+                "checked off?": "Yes",
+                "price": 50,
+                "name": "test",
+                "brand": "test"
+            }],
             "name": "Rachel"
         },
         {
@@ -11,12 +21,7 @@
             "name": "Monica"
         },
         {
-            "to-buy List": [{
-                "checked off?": "No",
-                "price": 100,
-                "name": "test",
-                "brand": "test"
-            }],
+            "to-buy List": [],
             "name": "Phoebe"
         }
     ]
