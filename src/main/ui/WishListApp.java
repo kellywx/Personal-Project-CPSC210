@@ -12,12 +12,15 @@ import model.FriendList;
 import model.Wallet;
 import model.Wish;
 import model.WishList;
+import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class WishListApp extends JFrame {
     private JTextField nameField;
@@ -31,6 +34,7 @@ public class WishListApp extends JFrame {
     private JPanel cardsPanel;
     private JPanel userWishListPanel;
     private JPanel friendsWishListPanel;
+    private JsonReader jsonReader;
 
     public WishListApp() {
         setTitle("My Wishlist");
@@ -41,9 +45,6 @@ public class WishListApp extends JFrame {
         userWishList = new WishList();
         userFriendList = new FriendList();
         userWallet = new Wallet();
-        userFriendList.addFriend("Rachel");
-        userFriendList.addFriend("Monica");
-        userFriendList.addFriend("Phoebe");
 
         cardLayout = new CardLayout();
         cardsPanel = new JPanel(cardLayout);
@@ -90,23 +91,29 @@ public class WishListApp extends JFrame {
                     String name = (String) table.getValueAt(row, 0);
                     String brand = (String) table.getValueAt(row, 1);
                     double itemPrice = (double) table.getValueAt(row, 2);
-                    // String priceString = (String) table.getValueAt(row, 2); // Get the price of the item
-                    // double itemPrice = Double.parseDouble(priceString.replace("$", "")); // Parse price
+                    // String priceString = (String) table.getValueAt(row, 2); // Get the price of
+                    // the item
+                    // double itemPrice = Double.parseDouble(priceString.replace("$", "")); // Parse
+                    // price
 
                     Wish wish = wishlist.findWish(name, brand);
 
-                    if (checkedOff != null && checkedOff) {
-                        if (userWallet.getMoney() >= itemPrice) {
-                            userWallet.spendMoney(itemPrice);
-                            wish.markChecked();
-                            walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
-                        } else {
-                            // Insufficient funds, uncheck the item
-                            JOptionPane.showMessageDialog(this, "Insufficient funds to check off this item!",
-                                    "Insufficient Balance", JOptionPane.ERROR_MESSAGE);
-                            table.setValueAt(false, row, column); // Uncheck the item
-                        }
+                    if (wish != null) {
+                        if (checkedOff != null && checkedOff) {
+                            if (userWallet.getMoney() >= itemPrice) {
+                                userWallet.spendMoney(itemPrice);
+                                wish.markChecked();
+                                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+                            } else {
+                                // Insufficient funds, uncheck the item
+                                JOptionPane.showMessageDialog(this, "Insufficient funds to check off this item!",
+                                        "Insufficient Balance", JOptionPane.ERROR_MESSAGE);
+                                table.setValueAt(false, row, column); // Uncheck the item
+                            }
 
+                        }
+                    } else {
+                        System.out.println("Error: Wish not found");
                     }
                 }
             }
@@ -144,19 +151,22 @@ public class WishListApp extends JFrame {
         JButton deleteButton = new JButton("Delete");
         JButton walletButton = new JButton("Set Wallet Balance");
         JButton viewFriendsButton = new JButton("View Friends");
-        JButton saveButton = new JButton("Save to File");
+        JButton saveButton = new JButton("Save");
+        JButton loadButton = new JButton("Load From File");
 
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(walletButton);
         buttonPanel.add(viewFriendsButton);
         buttonPanel.add(saveButton);
+        buttonPanel.add(loadButton);
         String sep = System.getProperty("file.separator");
         ImageIcon originalCoinImage = new ImageIcon(
                 System.getProperty("user.dir") + sep + "images" + sep + "dollar.png");
         Image scaledImage = originalCoinImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         ImageIcon scaledCoinImage = new ImageIcon(scaledImage);
-        walletLabel = new JLabel("$0.00", scaledCoinImage, JLabel.LEADING);
+        String label = "$" + String.format("%.2f", userWallet.getMoney());
+        walletLabel = new JLabel(label, scaledCoinImage, JLabel.LEADING);
         buttonPanel.add(walletLabel);
 
         userPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -198,8 +208,80 @@ public class WishListApp extends JFrame {
             }
         });
 
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDataFromFile();
+            }
+        });
+
         return userPanel;
 
+    }
+
+    // Handle the "Load From File" button click
+    private void loadDataFromFile() {
+        // Open the file chooser dialog
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a JSON file to load");
+
+        // Filter to show only JSON files
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON Files", "json"));
+
+        // Show the dialog and check if the user selected a file
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                // Initialize JsonReader with the selected file path
+                jsonReader = new JsonReader(selectedFile.getAbsolutePath());
+
+                // Load the wishlist, friend list, and wallet
+                WishList wishList = jsonReader.readWishList();
+                FriendList friendList = jsonReader.readFriendList();
+                Wallet wallet = jsonReader.readWallet();
+
+                // Update the userWishList with the loaded data
+                userWishList = wishList; // Replace the current wishlist with the loaded one
+                userFriendList = friendList;
+                userWallet = wallet;
+
+                // Now update the table on the userWishListPanel
+                updateWishListTable();
+                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Show an error message if something goes wrong
+                JOptionPane.showMessageDialog(null, "Error loading the file: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void updateWishListTable() {
+        // Clear the existing rows in the table
+        DefaultTableModel tableModel = (DefaultTableModel) ((JTable) ((JScrollPane) userWishListPanel.getComponent(1))
+                .getViewport().getView()).getModel();
+        tableModel.setRowCount(0); // Clear all rows
+
+        // Add the items from the loaded wishlist to the table
+        for (Wish wish : userWishList.getWishList()) {
+            String name = wish.getName();
+            String brand = wish.getBrand();
+            double price = wish.getPrice();
+            boolean isChecked = wish.isChecked();
+            tableModel.addRow(new Object[] { name, brand, price, isChecked });
+        }
+
+        // Recreate the table and reattach the listener
+        JTable table = new JTable(tableModel) {
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return column == 3 ? Boolean.class : String.class;
+            }
+        };
+        tableListener(table, userWishList); // Reattach the listener
     }
 
     private void saveDataToFile() {
@@ -291,7 +373,7 @@ public class WishListApp extends JFrame {
         if (!name.isEmpty() && !brand.isEmpty() && !price.isEmpty()) {
             double priceValue = Double.parseDouble(price);
             wishlist.addWish(name, brand, priceValue); // Add to WishList
-            //String formattedPrice = "$" + String.format("%.2f", priceValue);
+            // String formattedPrice = "$" + String.format("%.2f", priceValue);
             tableModel.addRow(new Object[] { name, brand, priceValue, false });
             nameField.setText("");
             brandField.setText("");
