@@ -1,18 +1,10 @@
 {
     "wishList": [{
-        "checked off?": "Yes",
+        "checked off?": "No",
         "price": 100,
         "name": "test",
         "brand": "test"
     }],
-    "wallet": 70,
-    "friendList": [{
-        "to-buy List": [{
-            "checked off?": "Yes",
-            "price": 30,
-            "name": "Shoes",
-            "brand": "Nike"
-        }],
-        "name": "Kelly"
-    }]
+    "wallet": 0,
+    "friendList": []
 }

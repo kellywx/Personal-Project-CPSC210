@@ -35,10 +35,13 @@ public class WishListApp extends JFrame {
     private JPanel userWishListPanel;
     private JPanel friendsWishListPanel;
     private JsonReader jsonReader;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private JPanel titleScreenPanel;
 
     public WishListApp() {
         setTitle("My Wishlist");
-        setSize(800, 400);
+        setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -49,15 +52,63 @@ public class WishListApp extends JFrame {
         cardLayout = new CardLayout();
         cardsPanel = new JPanel(cardLayout);
         userWishListPanel = createUserWishListPanel();
+        titleScreenPanel = createTitleScreenPanel();
 
         // Add the panels to the CardLayout container
+        cardsPanel.add(titleScreenPanel, "Title Screen");
         cardsPanel.add(userWishListPanel, "User's Wishlist");
 
         // Set the initial view to be the user's wishlist
-        cardLayout.show(cardsPanel, "User's Wishlist");
+        cardLayout.show(cardsPanel, "Title Screen");
 
         // Add the cardsPanel to the JFrame
         add(cardsPanel, BorderLayout.CENTER);
+    }
+
+    private JPanel createTitleScreenPanel() {
+        JPanel panel = new JPanel() {
+            // Override paintComponent to draw the background image
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                String sep = System.getProperty("file.separator");
+                ImageIcon backgroundImage = new ImageIcon(
+                        System.getProperty("user.dir") + sep + "images" + sep + "logo.png");
+                int imageWidth = 500;
+                int imageHeight = 500;
+                int width = backgroundImage.getIconWidth();
+                int height = backgroundImage.getIconHeight();
+
+                int panelWidth = getWidth();
+                int panelHeight = getHeight();
+                g.drawImage(backgroundImage.getImage(), (panelWidth - width) / 2, (panelHeight - height) / 2,
+                        imageWidth, imageHeight, this);
+            }
+        };
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        // Add a "Go" button
+        JButton goButton = new JButton("START");
+        goButton.setFont(new Font("Arial", Font.BOLD, 20));
+        goButton.setForeground(Color.WHITE);
+        goButton.setBackground(new Color(241, 213, 219));
+        goButton.setOpaque(true);
+        goButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        goButton.setPreferredSize(new Dimension(150, 40));
+
+        // ActionListener for the "Go" button
+        goButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the user wishlist panel
+                cardLayout.show(cardsPanel, "User's Wishlist");
+            }
+        });
+
+        panel.add(goButton, BorderLayout.SOUTH); // Add the "Go" button at the bottom of the panel
+
+        return panel;
     }
 
     private JPanel createInputPanel() {
@@ -127,13 +178,14 @@ public class WishListApp extends JFrame {
 
         // Add the table to a JScrollPane and set scroll bar policies
         String[] columnNames = { "Item Name", "Brand", "Price", "Checked Off" };
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        JTable table = new JTable(tableModel) {
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel) {
             @Override
             public Class<?> getColumnClass(int column) {
                 return column == 3 ? Boolean.class : String.class;
             }
         };
+
         for (Wish wish : userWishList.getWishList()) {
             String name = wish.getName();
             String brand = wish.getBrand();
@@ -261,8 +313,9 @@ public class WishListApp extends JFrame {
 
     private void updateWishListTable() {
         // Clear the existing rows in the table
-        DefaultTableModel tableModel = (DefaultTableModel) ((JTable) ((JScrollPane) userWishListPanel.getComponent(1))
-                .getViewport().getView()).getModel();
+        // DefaultTableModel tableModel = (DefaultTableModel) ((JTable) ((JScrollPane)
+        // userWishListPanel.getComponent(1))
+        // .getViewport().getView()).getModel();
         tableModel.setRowCount(0); // Clear all rows
 
         // Add the items from the loaded wishlist to the table
@@ -274,15 +327,33 @@ public class WishListApp extends JFrame {
             tableModel.addRow(new Object[] { name, brand, price, isChecked });
         }
 
-        // Recreate the table and reattach the listener
-        JTable table = new JTable(tableModel) {
-            @Override
-            public Class<?> getColumnClass(int column) {
-                return column == 3 ? Boolean.class : String.class;
-            }
-        };
-        tableListener(table, userWishList); // Reattach the listener
+        // // // Recreate the table and reattach the listener
+        // table = new JTable(tableModel) {
+        // @Override
+        // public Class<?> getColumnClass(int column) {
+        // return column == 3 ? Boolean.class : String.class;
+        // }
+        // };
+        // tableListener(table, userWishList); // Reattach the listener
+        table.revalidate();
+        table.repaint();
+        tableListener(table, userWishList);
     }
+
+    // private void refreshUserWishListPanel() {
+    // // Remove the old userWishListPanel from the cardLayout
+    // cardsPanel.remove(userWishListPanel);
+
+    // // Create a new userWishListPanel with the updated wish list data
+    // JPanel newUserWishListPanel = createUserWishListPanel();
+
+    // // Add the new userWishListPanel to the cardsPanel
+    // cardsPanel.add(newUserWishListPanel, "New User's Wishlist");
+    // cardLayout.show(cardsPanel, "New User's Wishlist");
+
+    // // Refresh the view to show the updated panel
+    // cardLayout.show(cardsPanel, "New User's Wishlist");
+    // }
 
     private void saveDataToFile() {
         try {
@@ -294,6 +365,7 @@ public class WishListApp extends JFrame {
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, "Error: Could not save data.", "Save Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     private static class DecimalFilter extends DocumentFilter {
