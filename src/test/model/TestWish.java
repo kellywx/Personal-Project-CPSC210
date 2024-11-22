@@ -41,17 +41,14 @@ public class TestWish {
 
     @Test
     public void testToJson() {
-        // Arrange: create a Wish object
-        Wish wish = new Wish("Laptop", "BrandX", 999.99);
+        Wish wish = new Wish("Laptop", "Apple", 999.99);
 
-        // Act: get the JSON representation
         JSONObject json = wish.toJson();
 
-        // Assert: check that the JSON object contains the correct data
         assertEquals("Laptop", json.get("name"));
-        assertEquals("BrandX", json.get("brand"));
+        assertEquals("Apple", json.get("brand"));
         assertEquals(999.99, json.get("price"));
-        assertEquals("No", json.get("checked off?"));  // By default, isChecked should be false, so "No"
+        assertEquals("No", json.get("checked off?"));
     }
 
 }

@@ -37,10 +37,8 @@ public class TestWallet {
 
     @Test
     public void testToJson() {
-        // Act: convert the Wallet object to JSON
         JSONObject json = testWallet.toJson();
 
-        // Assert: the JSON should contain a key "wallet" with value 0.00
         assertTrue(json.has("wallet"));
         assertEquals(0.00, json.getDouble("wallet"),0.00001);
 
@@ -48,11 +46,9 @@ public class TestWallet {
 
     @Test
     public void testToJsonAddMoney() {
-        // Act: convert the Wallet object to JSON
         testWallet.addMoney(100.00);
         JSONObject json = testWallet.toJson();
 
-        // Assert: the JSON should contain a key "wallet" with value 0.00
         assertTrue(json.has("wallet"));
         assertEquals(100.00, json.getDouble("wallet"),0.00001);
 

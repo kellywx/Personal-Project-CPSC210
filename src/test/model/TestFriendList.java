@@ -66,12 +66,10 @@ public class TestFriendList {
 
     @Test
     public void testToJson() {
-        // Act: convert the FriendList object to JSON
         testFriendList.addFriend("Rachel");
         testFriendList.addFriend("Monica");
         JSONObject json = testFriendList.toJson();
 
-        // Assert: the JSON should contain a key "friendList" with an empty array
         assertTrue(json.has("friendList"));
         JSONArray jsonArray = json.getJSONArray("friendList");
         assertEquals(2, jsonArray.length());
@@ -79,23 +77,17 @@ public class TestFriendList {
 
     @Test
     public void testFriendsToJson() {
-        // Arrange: add multiple friends to the list
-        testFriendList.addFriend("John");
-        testFriendList.addFriend("Alice");
+        testFriendList.addFriend("Phoebe");
+        testFriendList.addFriend("Chandler");
 
-        // Act: call friendsToJson directly
         JSONArray jsonArray = testFriendList.friendsToJson();
-
-        // Assert: the JSON array should have the same number of friends
         assertEquals(2, jsonArray.length());
 
-        // Verify the first friend
         JSONObject firstFriend = jsonArray.getJSONObject(0);
-        assertEquals("John", firstFriend.getString("name"));
+        assertEquals("Phoebe", firstFriend.getString("name"));
 
-        // Verify the second friend
         JSONObject secondFriend = jsonArray.getJSONObject(1);
-        assertEquals("Alice", secondFriend.getString("name"));
+        assertEquals("Chandler", secondFriend.getString("name"));
     }
 
 }
