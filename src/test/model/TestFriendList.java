@@ -3,6 +3,10 @@ package model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +62,40 @@ public class TestFriendList {
         assertEquals(0,testFriendList.getFriend("Rachel").getToBuyList().getWishList().size());
 
         assertNull(testFriendList.getFriend("Joey"));
+    }
+
+    @Test
+    public void testToJson() {
+        // Act: convert the FriendList object to JSON
+        testFriendList.addFriend("Rachel");
+        testFriendList.addFriend("Monica");
+        JSONObject json = testFriendList.toJson();
+
+        // Assert: the JSON should contain a key "friendList" with an empty array
+        assertTrue(json.has("friendList"));
+        JSONArray jsonArray = json.getJSONArray("friendList");
+        assertEquals(2, jsonArray.length());
+    }
+
+    @Test
+    public void testFriendsToJson() {
+        // Arrange: add multiple friends to the list
+        testFriendList.addFriend("John");
+        testFriendList.addFriend("Alice");
+
+        // Act: call friendsToJson directly
+        JSONArray jsonArray = testFriendList.friendsToJson();
+
+        // Assert: the JSON array should have the same number of friends
+        assertEquals(2, jsonArray.length());
+
+        // Verify the first friend
+        JSONObject firstFriend = jsonArray.getJSONObject(0);
+        assertEquals("John", firstFriend.getString("name"));
+
+        // Verify the second friend
+        JSONObject secondFriend = jsonArray.getJSONObject(1);
+        assertEquals("Alice", secondFriend.getString("name"));
     }
 
 }

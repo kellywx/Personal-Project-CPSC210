@@ -64,7 +64,7 @@ public class FriendList implements Writable {
     }
 
     // EFFECTS: returns wishes in this wishlist as a JSON array
-    private JSONArray friendsToJson() {
+    public JSONArray friendsToJson() {
         JSONArray jsonArray = new JSONArray();
 
         for (Friend friend : friendList) {

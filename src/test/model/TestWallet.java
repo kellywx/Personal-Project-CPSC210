@@ -2,6 +2,10 @@ package model;
 
 import static org.junit.Assert.assertEquals;
 
+import org.json.JSONObject;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +19,43 @@ public class TestWallet {
 
     @Test
     void testConstructor() {
-        assertEquals(0, testWallet.getMoney());
+        assertEquals(0.00, testWallet.getMoney(),0.00001);
     }
 
     @Test
     void testAddMoney() {
-        testWallet.addMoney(100);
-        assertEquals(100, testWallet.getMoney());
+        testWallet.addMoney(100.50);
+        assertEquals(100.50, testWallet.getMoney(),0.00001);
     }
 
     @Test
     void testSpendMoney() {
-        testWallet.addMoney(100);
-        testWallet.spendMoney(30);
-        assertEquals(70, testWallet.getMoney());
+        testWallet.addMoney(100.50);
+        testWallet.spendMoney(30.00);
+        assertEquals(100.50 - 30.00, testWallet.getMoney(),0.00001);
+    }
+
+    @Test
+    public void testToJson() {
+        // Act: convert the Wallet object to JSON
+        JSONObject json = testWallet.toJson();
+
+        // Assert: the JSON should contain a key "wallet" with value 0.00
+        assertTrue(json.has("wallet"));
+        assertEquals(0.00, json.getDouble("wallet"),0.00001);
+
+    }
+
+    @Test
+    public void testToJsonAddMoney() {
+        // Act: convert the Wallet object to JSON
+        testWallet.addMoney(100.00);
+        JSONObject json = testWallet.toJson();
+
+        // Assert: the JSON should contain a key "wallet" with value 0.00
+        assertTrue(json.has("wallet"));
+        assertEquals(100.00, json.getDouble("wallet"),0.00001);
+
     }
 
 }

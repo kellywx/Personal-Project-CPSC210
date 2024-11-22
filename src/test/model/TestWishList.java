@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -81,6 +83,58 @@ public class TestWishList {
         assertNull(testWishList.findWish("Lipstick", "FakeSephora"));
         assertNull(testWishList.findWish("FakeLipstick", "Sephora"));
         assertNull(testWishList.findWish("FakeLipstick", "FakeSephora"));
+    }
+
+     @Test
+    public void testToJson() {
+        testWishList.addWish("Laptop", "BrandX", 999.99);
+        testWishList.addWish("Phone", "BrandY", 499.99);
+
+        JSONObject json = testWishList.toJson();
+        assertTrue(json.has("wishList"));
+        JSONArray wishArray = json.getJSONArray("wishList");
+
+        assertEquals(2, wishArray.length());
+
+        // Assert that the first Wish object is correct
+        JSONObject firstWish = wishArray.getJSONObject(0);
+        assertEquals("Laptop", firstWish.get("name"));
+        assertEquals("BrandX", firstWish.get("brand"));
+        assertEquals(999.99, firstWish.get("price"));
+        assertEquals("No", firstWish.get("checked off?"));
+
+        // Assert that the second Wish object is correct
+        JSONObject secondWish = wishArray.getJSONObject(1);
+        assertEquals("Phone", secondWish.get("name"));
+        assertEquals("BrandY", secondWish.get("brand"));
+        assertEquals(499.99, secondWish.get("price"));
+        assertEquals("No", secondWish.get("checked off?"));
+    }
+
+    @Test
+    public void testWishesToJson() {
+        testWishList.addWish("Laptop", "BrandX", 999.99);
+        testWishList.addWish("Phone", "BrandY", 499.99);
+
+        // Act: get the JSONArray representation of the wishes
+        JSONArray jsonArray = testWishList.wishesToJson();
+
+        // Assert: check that the number of elements in the JSONArray is correct
+        assertEquals(2, jsonArray.length());
+
+        // Assert that the first Wish object is correct
+        JSONObject firstWish = jsonArray.getJSONObject(0);
+        assertEquals("Laptop", firstWish.get("name"));
+        assertEquals("BrandX", firstWish.get("brand"));
+        assertEquals(999.99, firstWish.get("price"));
+        assertEquals("No", firstWish.get("checked off?"));
+
+        // Assert that the second Wish object is correct
+        JSONObject secondWish = jsonArray.getJSONObject(1);
+        assertEquals("Phone", secondWish.get("name"));
+        assertEquals("BrandY", secondWish.get("brand"));
+        assertEquals(499.99, secondWish.get("price"));
+        assertEquals("No", secondWish.get("checked off?"));
     }
 
 }
