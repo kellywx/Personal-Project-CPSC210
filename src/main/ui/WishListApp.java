@@ -28,12 +28,12 @@ public class WishListApp extends JFrame {
     private JTextField priceField;
     private JLabel walletLabel;
     private WishList userWishList;
-    private FriendList userFriendList;
-    private Wallet userWallet;
+    private FriendList friendList;
+    private Wallet wallet;
     private CardLayout cardLayout;
     private JPanel cardsPanel;
-    private JPanel userWishListPanel;
-    private JPanel friendsWishListPanel;
+    private JPanel wishListPanel;
+    private JPanel friendListPanel;
     private JsonReader jsonReader;
     private DefaultTableModel tableModel;
     private JTable table;
@@ -46,75 +46,65 @@ public class WishListApp extends JFrame {
         setLayout(new BorderLayout());
 
         userWishList = new WishList();
-        userFriendList = new FriendList();
-        userWallet = new Wallet();
+        friendList = new FriendList();
+        wallet = new Wallet();
 
         cardLayout = new CardLayout();
         cardsPanel = new JPanel(cardLayout);
-        userWishListPanel = createUserWishListPanel();
+        wishListPanel = createUserWishListPanel();
         titleScreenPanel = createTitleScreenPanel();
 
-        // Add the panels to the CardLayout container
         cardsPanel.add(titleScreenPanel, "Title Screen");
-        cardsPanel.add(userWishListPanel, "User's Wishlist");
+        cardsPanel.add(wishListPanel, "User's Wishlist");
 
-        // Set the initial view to be the user's wishlist
         cardLayout.show(cardsPanel, "Title Screen");
 
-        // Add the cardsPanel to the JFrame
         add(cardsPanel, BorderLayout.CENTER);
     }
 
+    // Creates opening title screen
+    @SuppressWarnings("methodlength")
     private JPanel createTitleScreenPanel() {
         JPanel panel = new JPanel() {
-            // Override paintComponent to draw the background image
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 String sep = System.getProperty("file.separator");
                 ImageIcon backgroundImage = new ImageIcon(
                         System.getProperty("user.dir") + sep + "images" + sep + "logo.png");
-                int imageWidth = 500;
-                int imageHeight = 500;
-                int width = backgroundImage.getIconWidth();
-                int height = backgroundImage.getIconHeight();
-
-                int panelWidth = getWidth();
-                int panelHeight = getHeight();
-                g.drawImage(backgroundImage.getImage(), (panelWidth - width) / 2, (panelHeight - height) / 2,
-                        imageWidth, imageHeight, this);
+                g.drawImage(backgroundImage.getImage(), (getWidth() - backgroundImage.getIconWidth()) / 2,
+                        (getHeight() - backgroundImage.getIconHeight()) / 2,
+                        500, 500, this);
             }
         };
         panel.setLayout(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Add a "Go" button
-        JButton goButton = new JButton("START");
-        goButton.setFont(new Font("Arial", Font.BOLD, 20));
-        goButton.setForeground(new Color(255, 27, 167));
-        goButton.setBackground(new Color(241, 213, 219));
-        goButton.setOpaque(true);
-        goButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-        goButton.setPreferredSize(new Dimension(150, 40));
+        JButton startButton = new JButton("START");
+        startButton.setFont(new Font("Arial", Font.BOLD, 20));
+        startButton.setForeground(new Color(255, 27, 167));
+        startButton.setBackground(new Color(241, 213, 219));
+        startButton.setOpaque(true);
+        startButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        startButton.setPreferredSize(new Dimension(150, 40));
 
-        // ActionListener for the "Go" button
-        goButton.addActionListener(new ActionListener() {
+        // ActionListener for the "Start" button
+        startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Switch to the user wishlist panel
                 cardLayout.show(cardsPanel, "User's Wishlist");
             }
         });
 
-        panel.add(goButton, BorderLayout.SOUTH); // Add the "Go" button at the bottom of the panel
+        panel.add(startButton, BorderLayout.SOUTH);
 
         return panel;
     }
 
+    // Creates an input panel for input fields
     private JPanel createInputPanel() {
-        // Input panel for item details
         JPanel inputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
-        inputPanel.add(new JLabel("Item Name:"));
+        inputPanel.add(new JLabel("Name:"));
         nameField = new JTextField();
         inputPanel.add(nameField);
 
@@ -130,12 +120,13 @@ public class WishListApp extends JFrame {
         return inputPanel;
     }
 
+    // Creates user wishlist panel
+    @SuppressWarnings("methodlength")
     private JPanel createUserWishListPanel() {
         JPanel userPanel = new JPanel(new BorderLayout());
         userPanel.add(createInputPanel(), BorderLayout.NORTH);
 
-        // Add the table to a JScrollPane and set scroll bar policies
-        String[] columnNames = { "Item Name", "Brand", "Price", "Checked Off" };
+        String[] columnNames = { "Name", "Brand", "Price", "Checked Off" };
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel) {
             @Override
@@ -149,16 +140,15 @@ public class WishListApp extends JFrame {
             if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
                 boolean isChecked = (boolean) table.getValueAt(e.getFirstRow(), e.getColumn());
                 if (e.getColumn() == 3 && isChecked) {
-                    onCheckboxChanged(table, e.getFirstRow(), userWishList);
+                    checkOff(table, e.getFirstRow(), userWishList);
                 }
             }
         });
 
-        // Button panel for add, delete, and wallet buttons
         JPanel buttonPanel = new JPanel();
-        JButton addButton = new JButton("Add Item");
+        JButton addButton = new JButton("Add Wish");
         JButton deleteButton = new JButton("Delete");
-        JButton walletButton = new JButton("Set Wallet Balance");
+        JButton walletButton = new JButton("Wallet");
         JButton viewFriendsButton = new JButton("View Friends");
         JButton saveButton = new JButton("Save");
         JButton loadButton = new JButton("Load From File");
@@ -174,7 +164,7 @@ public class WishListApp extends JFrame {
                 System.getProperty("user.dir") + sep + "images" + sep + "dollar.png");
         Image scaledImage = originalCoinImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         ImageIcon scaledCoinImage = new ImageIcon(scaledImage);
-        String label = "$" + String.format("%.2f", userWallet.getMoney());
+        String label = "$" + String.format("%.2f", wallet.getMoney());
         walletLabel = new JLabel(label, scaledCoinImage, JLabel.LEADING);
         buttonPanel.add(walletLabel);
 
@@ -184,43 +174,42 @@ public class WishListApp extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addItem(userWishList, tableModel);
+                addWish(userWishList, tableModel);
             }
         });
 
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedItem(userWishList, table, tableModel);
+                deleteWish(userWishList, table, tableModel);
             }
         });
 
         walletButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openWalletDialog();
+                addToWallet();
             }
         });
 
-        // View Friends button action
         viewFriendsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openViewFriendsDialog();
+                viewFriends();
             }
         });
 
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveDataToFile();
+                saveToFile();
             }
         });
 
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadDataFromFile();
+                loadFromFile();
             }
         });
 
@@ -228,24 +217,24 @@ public class WishListApp extends JFrame {
 
     }
 
-    // This method is called whenever a checkbox is checked or unchecked
-    private void onCheckboxChanged(JTable table, int row, WishList wishlist) {
+    // Checks if wish can be checked off based on amount in wallet
+    private void checkOff(JTable table, int row, WishList wishlist) {
         String name = (String) table.getValueAt(row, 0);
         String brand = (String) table.getValueAt(row, 1);
-        double itemPrice = (double) table.getValueAt(row, 2);
+        double price = (double) table.getValueAt(row, 2);
 
         Wish wish = wishlist.findWish(name, brand);
 
         if (wish != null) {
-            if (userWallet.getMoney() >= itemPrice) {
-                userWallet.spendMoney(itemPrice);
+            if (wallet.getMoney() >= price) {
+                wallet.spendMoney(price);
                 wish.markChecked();
-                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+                walletLabel.setText("$" + String.format("%.2f", wallet.getMoney()));
             } else {
-                // Insufficient funds, uncheck the item
-                JOptionPane.showMessageDialog(this, "Insufficient funds to check off this item!",
+                // Insufficient funds, uncheck the wish
+                JOptionPane.showMessageDialog(this, "Insufficient funds to check off this wish!",
                         "Insufficient Balance", JOptionPane.ERROR_MESSAGE);
-                table.setValueAt(false, row, 3); // Uncheck the item
+                table.setValueAt(false, row, 3);
             }
 
         } else {
@@ -253,21 +242,17 @@ public class WishListApp extends JFrame {
         }
     }
 
-    // Handle the "Load From File" button click
-    private void loadDataFromFile() {
-        // Open the file chooser dialog
+    // Loads file into application
+    private void loadFromFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select a JSON file to load");
 
-        // Filter to show only JSON files
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON Files", "json"));
 
-        // Show the dialog and check if the user selected a file
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             try {
-                // Initialize JsonReader with the selected file path
                 jsonReader = new JsonReader(selectedFile.getAbsolutePath());
 
                 // Load the wishlist, friend list, and wallet
@@ -275,35 +260,25 @@ public class WishListApp extends JFrame {
                 FriendList friendList = jsonReader.readFriendList();
                 Wallet wallet = jsonReader.readWallet();
 
-                // Update the userWishList with the loaded data
-                userWishList = wishList; // Replace the current wishlist with the loaded one
-                userFriendList = friendList;
-                userWallet = wallet;
+                this.userWishList = wishList;
+                this.friendList = friendList;
+                this.wallet = wallet;
 
-                // Now update the table on the userWishListPanel
-                updateWishListTable();
-                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
-                // Create and add the friends' wishlists dynamically
-                for (Friend friend : userFriendList.getFriendList()) {
-                    String friendName = friend.getName();
-                    JPanel friendPanel = createFriendsWishListPanel(friendName);
-
-                    cardsPanel.add(friendPanel, friendName + "'s Wishlist");
-                }
+                updatePanels();
+                walletLabel.setText("$" + String.format("%.2f", wallet.getMoney()));
 
             } catch (IOException e) {
                 e.printStackTrace();
-                // Show an error message if something goes wrong
                 JOptionPane.showMessageDialog(null, "Error loading the file: " + e.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void updateWishListTable() {
-        tableModel.setRowCount(0); // Clear all rows
+    // Updates wishlist panel and friend's panels after loading
+    private void updatePanels() {
+        tableModel.setRowCount(0);
 
-        // Add the items from the loaded wishlist to the table
         for (Wish wish : userWishList.getWishList()) {
             String name = wish.getName();
             String brand = wish.getBrand();
@@ -311,13 +286,21 @@ public class WishListApp extends JFrame {
             boolean isChecked = wish.isChecked();
             tableModel.addRow(new Object[] { name, brand, price, isChecked });
         }
+
+        for (Friend friend : friendList.getFriendList()) {
+            String friendName = friend.getName();
+            openFriendsWishlist(friendName);
+        }
+        cardLayout.show(cardsPanel, "User's Wishlist");
+        setTitle("My Wishlist");
     }
 
-    private void saveDataToFile() {
+    // Saves wishlist, friend list, and wallet to file
+    private void saveToFile() {
         try {
             JsonWriter jsonWriter = new JsonWriter("wishlist_data.json");
             jsonWriter.open();
-            jsonWriter.write(userWishList, userWallet, userFriendList);
+            jsonWriter.write(userWishList, wallet, friendList);
             jsonWriter.close();
             JOptionPane.showMessageDialog(this, "Data saved successfully.");
         } catch (FileNotFoundException e) {
@@ -326,6 +309,7 @@ public class WishListApp extends JFrame {
 
     }
 
+    // Filters to only allow doubles to two decimal places
     private static class DecimalFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
@@ -350,8 +334,9 @@ public class WishListApp extends JFrame {
         }
     }
 
-    private void openWalletDialog() {
-        // Create a new dialog
+    // Allows user to add money to wallet
+    @SuppressWarnings("methodlength")
+    private void addToWallet() {
         JDialog walletDialog = new JDialog(this, "Add Money to Wallet", true);
         walletDialog.setSize(300, 150);
         walletDialog.setLayout(new BorderLayout());
@@ -378,8 +363,8 @@ public class WishListApp extends JFrame {
                         JOptionPane.showMessageDialog(walletDialog, "Amount must be positive.", "Input Error",
                                 JOptionPane.ERROR_MESSAGE);
                     } else {
-                        userWallet.addMoney(amountToAdd);
-                        walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+                        wallet.addMoney(amountToAdd);
+                        walletLabel.setText("$" + String.format("%.2f", wallet.getMoney()));
                         JOptionPane.showMessageDialog(walletDialog,
                                 "Successfully added $" + amountToAdd + " to your wallet.");
                         walletDialog.dispose();
@@ -391,11 +376,12 @@ public class WishListApp extends JFrame {
             }
         });
 
-        walletDialog.setVisible(true); // Show the wallet dialog
+        walletDialog.setVisible(true);
 
     }
 
-    private void addItem(WishList wishlist, DefaultTableModel tableModel) {
+    // Adds wish to wishlist
+    private void addWish(WishList wishlist, DefaultTableModel tableModel) {
         String name = nameField.getText();
         String brand = brandField.getText();
         String price = priceField.getText();
@@ -413,7 +399,8 @@ public class WishListApp extends JFrame {
         }
     }
 
-    private void deleteSelectedItem(WishList wishlist, JTable table, DefaultTableModel tableModel) {
+    // Deletes selected wish
+    private void deleteWish(WishList wishlist, JTable table, DefaultTableModel tableModel) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
             String name = (String) tableModel.getValueAt(selectedRow, 0);
@@ -421,19 +408,20 @@ public class WishListApp extends JFrame {
             wishlist.deleteWish(name, brand);
             tableModel.removeRow(selectedRow);
         } else {
-            JOptionPane.showMessageDialog(this, "Please select an item to delete", "Selection Error",
+            JOptionPane.showMessageDialog(this, "Please select a wish to delete", "Selection Error",
                     JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void openViewFriendsDialog() {
-        // Create dialog for friends list
+    // Allows user to view friends, add friends, and select friends
+    @SuppressWarnings("methodlength")
+    private void viewFriends() {
         JDialog friendsDialog = new JDialog(this, "View Friends", true);
         friendsDialog.setSize(300, 200);
         friendsDialog.setLayout(new BorderLayout());
 
         DefaultListModel<String> friendsListModel = new DefaultListModel<>();
-        for (Friend friend : userFriendList.getFriendList()) {
+        for (Friend friend : friendList.getFriendList()) {
             friendsListModel.addElement(friend.getName());
         }
         JList<String> friendsList = new JList<>(friendsListModel);
@@ -453,7 +441,7 @@ public class WishListApp extends JFrame {
         selectFriendButton.addActionListener(e -> {
             String selectedFriend = friendsList.getSelectedValue();
             if (selectedFriend != null) {
-                cardLayout.show(cardsPanel, selectedFriend + "'s Wishlist");
+                openFriendsWishlist(selectedFriend);
                 friendsDialog.dispose();
             } else {
                 JOptionPane.showMessageDialog(friendsDialog, "Please select a friend.", "No Friend Selected",
@@ -466,9 +454,7 @@ public class WishListApp extends JFrame {
             String newFriendName = JOptionPane.showInputDialog(friendsDialog, "Enter the new friend's name:");
             if (newFriendName != null && !newFriendName.trim().isEmpty()) {
                 friendsListModel.addElement(newFriendName.trim());
-                userFriendList.addFriend(newFriendName);
-                JPanel friendPanel = createFriendsWishListPanel(newFriendName);
-                cardsPanel.add(friendPanel, newFriendName + "'s To-Buy List");
+                friendList.addFriend(newFriendName);
             } else {
                 JOptionPane.showMessageDialog(friendsDialog, "Friend's name cannot be empty.", "Input Error",
                         JOptionPane.WARNING_MESSAGE);
@@ -482,7 +468,7 @@ public class WishListApp extends JFrame {
                 JOptionPane.showMessageDialog(WishListApp.this, "Please enter a friend's name to delete",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                userFriendList.deleteFriend(selectedFriend);
+                friendList.deleteFriend(selectedFriend);
                 friendsListModel.removeElement(selectedFriend.trim());
             }
         });
@@ -490,13 +476,14 @@ public class WishListApp extends JFrame {
         friendsDialog.setVisible(true);
     }
 
+    // Creates each friend's to-buy list
+    @SuppressWarnings("methodlength")
     private JPanel createFriendsWishListPanel(String friendName) {
         JPanel friendsPanel = new JPanel(new BorderLayout());
-        setTitle(friendName + "'s To-Buy List");
         friendsPanel.add(createInputPanel(), BorderLayout.NORTH);
+        setTitle(friendName + "'s To-Buy List");
 
-        // Wishlist table
-        String[] columnNames = { "Item Name", "Brand", "Price", "Checked Off" };
+        String[] columnNames = { "Name", "Brand", "Price", "Checked Off" };
         DefaultTableModel friendTableModel = new DefaultTableModel(columnNames, 0);
         JTable friendTable = new JTable(friendTableModel) {
             @Override
@@ -507,48 +494,47 @@ public class WishListApp extends JFrame {
         JScrollPane scrollPane = new JScrollPane(friendTable);
         friendsPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Populate the table with the friend's wishlist items
-        Friend friend = userFriendList.getFriend(friendName);
-        for (Wish wish : friend.getToBuyList().getWishList()) {
-            friendTableModel
-                    .addRow(new Object[] { wish.getName(), wish.getBrand(), wish.getPrice(), wish.isChecked() });
+        for (Wish wish : friendList.getFriend(friendName).getToBuyList().getWishList()) {
+            String name = wish.getName();
+            String brand = wish.getBrand();
+            double price = wish.getPrice();
+            boolean isChecked = wish.isChecked();
+            friendTableModel.addRow(new Object[] { name, brand, price, isChecked });
         }
 
         friendTable.getModel().addTableModelListener(e -> {
             if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
                 boolean isChecked = (boolean) friendTable.getValueAt(e.getFirstRow(), e.getColumn());
                 if (e.getColumn() == 3 && isChecked) {
-                    onCheckboxChanged(friendTable, e.getFirstRow(),
-                            userFriendList.getFriend(friendName).getToBuyList());
+                    checkOff(friendTable, e.getFirstRow(), friendList.getFriend(friendName).getToBuyList());
                 }
             }
         });
 
-        // Button panel for adding and deleting items
         JPanel friendButtonPanel = new JPanel();
-        JButton addFriendItemButton = new JButton("Add Item");
-        JButton deleteFriendItemButton = new JButton("Delete");
+        JButton addButton = new JButton("Add Wish");
+        JButton deleteButton = new JButton("Delete");
         JButton backButton = new JButton("Back");
 
-        friendButtonPanel.add(addFriendItemButton);
-        friendButtonPanel.add(deleteFriendItemButton);
+        friendButtonPanel.add(addButton);
+        friendButtonPanel.add(deleteButton);
         friendButtonPanel.add(backButton);
 
         friendsPanel.add(friendButtonPanel, BorderLayout.SOUTH);
 
-        // Action listener for adding items to friend's wishlist
-        addFriendItemButton.addActionListener(new ActionListener() {
+        // Action listener for adding wishes to friend's to-buy list
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addItem(userFriendList.getFriend(friendName).getToBuyList(), friendTableModel);
+                addWish(friendList.getFriend(friendName).getToBuyList(), friendTableModel);
             }
         });
 
-        // Action listener for deleting items from friend's wishlist
-        deleteFriendItemButton.addActionListener(new ActionListener() {
+        // Action listener for deleting wishes from friend's to-buy list
+        deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedItem(userFriendList.getFriend(friendName).getToBuyList(), friendTable, friendTableModel);
+                deleteWish(friendList.getFriend(friendName).getToBuyList(), friendTable, friendTableModel);
             }
         });
 
@@ -557,7 +543,7 @@ public class WishListApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardsPanel, "User's Wishlist");
-                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+                walletLabel.setText("$" + String.format("%.2f", wallet.getMoney()));
                 setTitle("My Wishlist");
             }
         });
@@ -565,5 +551,10 @@ public class WishListApp extends JFrame {
         return friendsPanel;
     }
 
-
+    // Opens selected friend's to-buy list
+    private void openFriendsWishlist(String friendName) {
+        friendListPanel = createFriendsWishListPanel(friendName);
+        cardsPanel.add(friendListPanel, "Friend's To-Buy List");
+        cardLayout.show(cardsPanel, "Friend's To-Buy List");
+    }
 }
