@@ -91,7 +91,7 @@ public class WishListApp extends JFrame {
         // Add a "Go" button
         JButton goButton = new JButton("START");
         goButton.setFont(new Font("Arial", Font.BOLD, 20));
-        goButton.setForeground(Color.WHITE);
+        goButton.setForeground(new Color(255, 27, 167));
         goButton.setBackground(new Color(241, 213, 219));
         goButton.setOpaque(true);
         goButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
@@ -185,17 +185,16 @@ public class WishListApp extends JFrame {
                 return column == 3 ? Boolean.class : String.class;
             }
         };
-
-        for (Wish wish : userWishList.getWishList()) {
-            String name = wish.getName();
-            String brand = wish.getBrand();
-            double price = wish.getPrice();
-            boolean isChecked = wish.isChecked();
-            tableModel.addRow(new Object[] { name, brand, price, isChecked });
-        }
         JScrollPane scrollPane = new JScrollPane(table);
         userPanel.add(scrollPane, BorderLayout.CENTER);
-        tableListener(table, userWishList);
+        table.getModel().addTableModelListener(e -> {
+            if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+                boolean isChecked = (boolean) table.getValueAt(e.getFirstRow(), e.getColumn());
+                if (e.getColumn() == 3 && isChecked) {
+                    onCheckboxChanged(e.getFirstRow(), userWishList);
+                }
+            }
+        });
 
         // Button panel for add, delete, and wallet buttons
         JPanel buttonPanel = new JPanel();
@@ -271,6 +270,31 @@ public class WishListApp extends JFrame {
 
     }
 
+    // This method is called whenever a checkbox is checked or unchecked
+    private void onCheckboxChanged(int row, WishList wishlist) {
+        String name = (String) table.getValueAt(row, 0);
+        String brand = (String) table.getValueAt(row, 1);
+        double itemPrice = (double) table.getValueAt(row, 2);
+
+        Wish wish = wishlist.findWish(name, brand);
+
+        if (wish != null) {
+            if (userWallet.getMoney() >= itemPrice) {
+                userWallet.spendMoney(itemPrice);
+                wish.markChecked();
+                walletLabel.setText("$" + String.format("%.2f", userWallet.getMoney()));
+            } else {
+                // Insufficient funds, uncheck the item
+                JOptionPane.showMessageDialog(this, "Insufficient funds to check off this item!",
+                        "Insufficient Balance", JOptionPane.ERROR_MESSAGE);
+                table.setValueAt(false, row, 3); // Uncheck the item
+            }
+
+        } else {
+            System.out.println("Error: Wish not found");
+        }
+    }
+
     // Handle the "Load From File" button click
     private void loadDataFromFile() {
         // Open the file chooser dialog
@@ -324,7 +348,7 @@ public class WishListApp extends JFrame {
             String brand = wish.getBrand();
             double price = wish.getPrice();
             boolean isChecked = wish.isChecked();
-            tableModel.addRow(new Object[] { name, brand, price, isChecked });
+            tableModel.addRow(new Object[] { name, brand, price, isChecked});
         }
 
         // // // Recreate the table and reattach the listener
@@ -335,9 +359,9 @@ public class WishListApp extends JFrame {
         // }
         // };
         // tableListener(table, userWishList); // Reattach the listener
-        table.revalidate();
-        table.repaint();
-        tableListener(table, userWishList);
+        // table.revalidate();
+        // table.repaint();
+        //tableListener(table, userWishList);
     }
 
     // private void refreshUserWishListPanel() {
