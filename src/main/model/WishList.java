@@ -19,7 +19,9 @@ public class WishList implements Writable {
     // MODIFIES: this
     // EFFECTS: adds a new Wish item to wishlist
     public void addWish(String name, String brand, double price) {
-        wishList.add(new Wish(name, brand, price));
+        Wish wish = new Wish(name, brand, price);
+        wishList.add(wish);
+        EventLog.getInstance().logEvent(new Event("Added wish: " + wish.getName() + " from " + wish.getBrand() + " ($" + wish.getPrice() + ")"));
     }
 
     // MODIFIES: this
@@ -35,6 +37,8 @@ public class WishList implements Writable {
         if (wishToRemove != null) {
             wishList.remove(wishToRemove);
         }
+
+        EventLog.getInstance().logEvent(new Event("Deleted wish: " + wishToRemove.getName() + " from " + wishToRemove.getBrand() + " ($" + wishToRemove.getPrice() + ")"));
     }
 
     // MODIFIES: this
@@ -50,6 +54,8 @@ public class WishList implements Writable {
         if (wishToCheck != null) {
             wishToCheck.markChecked();
         }
+
+        EventLog.getInstance().logEvent(new Event("Checked off wish: " + wishToCheck.getName() + " from " + wishToCheck.getBrand() + " ($" + wishToCheck.getPrice() + ")"));
     }
 
     public Wish findWish(String name, String brand) {

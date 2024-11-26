@@ -20,6 +20,7 @@ public class FriendList implements Writable {
     // EFFECTS: adds a new friend to friend list
     public void addFriend(String name) {
         friendList.add(new Friend(name));
+        EventLog.getInstance().logEvent(new Event("Added New Friend: " + name));
     }
 
     // MODIFIES: this
@@ -34,6 +35,7 @@ public class FriendList implements Writable {
         }
         if (friendToRemove != null) {
             friendList.remove(friendToRemove);
+            EventLog.getInstance().logEvent(new Event("Deleted Friend: " + name));
         }
     }
 
@@ -46,10 +48,12 @@ public class FriendList implements Writable {
             }
         }
         if (selectedFriend != null) {
+            EventLog.getInstance().logEvent(new Event("Selected Friend: " + name));
             return selectedFriend;
         } else {
             return null;
         }
+
     }
 
     public ArrayList<Friend> getFriendList() {

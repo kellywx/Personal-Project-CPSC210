@@ -18,6 +18,8 @@ public class Wallet implements Writable {
     // EFFECTS: adds given amount of money to wallet
     public void addMoney(double money) {
         this.money += money;
+        String str = Double.toString(money);
+        EventLog.getInstance().logEvent(new Event("Added " + str + " to wallet"));
     }
 
     // REQUIRES: money > 0
@@ -25,6 +27,8 @@ public class Wallet implements Writable {
     // EFFECTS: subtracts given amount of money from wallet
     public void spendMoney(double money) {
         this.money -= money;
+        String str = Double.toString(money);
+        EventLog.getInstance().logEvent(new Event("Spent " + str));
     }
 
     public double getMoney() {

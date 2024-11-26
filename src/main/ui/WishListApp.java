@@ -7,6 +7,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
+import model.Event;
+import model.EventLog;
 import model.Friend;
 import model.FriendList;
 import model.Wallet;
@@ -18,6 +20,8 @@ import persistence.JsonWriter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,6 +47,13 @@ public class WishListApp extends JFrame {
         setTitle("My Wishlist");
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onWindowClose(EventLog.getInstance());
+                System.exit(0);
+            }
+        });
         setLayout(new BorderLayout());
 
         userWishList = new WishList();
@@ -60,6 +71,12 @@ public class WishListApp extends JFrame {
         cardLayout.show(cardsPanel, "Title Screen");
 
         add(cardsPanel, BorderLayout.CENTER);
+    }
+
+    private void onWindowClose(EventLog el) {
+        for (Event next : el) {
+            System.out.println(next);
+        }
     }
 
     // Creates opening title screen
@@ -417,7 +434,7 @@ public class WishListApp extends JFrame {
     @SuppressWarnings("methodlength")
     private void viewFriends() {
         JDialog friendsDialog = new JDialog(this, "View Friends", true);
-        friendsDialog.setSize(300, 200);
+        friendsDialog.setSize(400, 300);
         friendsDialog.setLayout(new BorderLayout());
 
         DefaultListModel<String> friendsListModel = new DefaultListModel<>();
@@ -465,7 +482,7 @@ public class WishListApp extends JFrame {
         deleteFriendButton.addActionListener(e -> {
             String selectedFriend = friendsList.getSelectedValue();
             if (selectedFriend.isEmpty()) {
-                JOptionPane.showMessageDialog(WishListApp.this, "Please enter a friend's name to delete",
+                JOptionPane.showMessageDialog(WishListApp.this, "Please select a friend to delete",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 friendList.deleteFriend(selectedFriend);
