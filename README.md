@@ -29,3 +29,6 @@ Added New Friend: Rachel
 Selected Friend: Rachel
 - Tue Nov 26 13:14:47 PST 2024
 Added wish: Shoes from Bloomingdale ($50.0)
+
+## Phase 4: Task 3
+If I had more time to further improve my project, I would refactor and introduce a List interface. Currently, both my WishList class and FriendList class have many of the same operations. These include, adding, removing, and finding wish items or friends. The specific code in these methods are similar and employ most of the same logic. Without an interface, the code can be redundant as both WishList and FriendList are lists being populated with Wish objects or Friend objects. To solve this repetition, I would introduce a List interface that can extract the common methods (add, remove, find) and have a getter method to return the list of items. That way, this would improve the overall design structure of my project by ensuring that there is no redundant code and making the UML diagram more concise. 
